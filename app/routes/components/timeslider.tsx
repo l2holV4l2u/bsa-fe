@@ -13,7 +13,7 @@ export default function TimeSlider({ time, setTime }: Time) {
       if (!isAnimating.current) return; // Exit if animation is stopped
 
       if (currentTime - lastUpdateTime.current >= 100) {
-        const nextTime = time + 1;
+        const nextTime = time + 5;
         setTime(nextTime >= 100 ? 100 : nextTime); // Stop at 100
         lastUpdateTime.current = currentTime;
       }

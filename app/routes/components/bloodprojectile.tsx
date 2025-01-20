@@ -1,6 +1,5 @@
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useRef, useState } from "react";
-import { Time } from "../types/time";
 import * as THREE from "three";
 
 export default function BloodProjectile({
@@ -10,38 +9,45 @@ export default function BloodProjectile({
   time: number;
   endpos: number[];
 }) {
-  const [positions, setPositions] = useState<[number, number, number][]>([]);
-  const trailRef = useRef<THREE.Line>(null!);
+  const [lines, setLines] = useState<THREE.BufferGeometry[]>([]);
+  const [curline, setCurLine] = useState<THREE.BufferGeometry | null>(null);
 
-  useFrame((_, delta) => {
-    const t = (time + delta) / 100;
-    console.log(t);
-    const x = endpos[0] * t;
-    const z = endpos[2] * t;
-    const v0 = 5;
-    const g = 9.81;
-    const y = v0 * t - 0.5 * g * t * t;
+  useEffect(() => {
+    // Precompute lines for all times
+    const templine: THREE.BufferGeometry[] = [];
+    const positions: [number, number, number][] = [];
+    for (let i = 0; i <= 1000; i++) {
+      const t = i / 1000;
+      const x = endpos[0] * t;
+      const z = endpos[2] * t;
+      const v0 = 5;
+      const g = 9.81;
+      let y = v0 * t - 0.5 * g * t * t;
+      y = Math.max(y, 0);
 
-    if (y <= 0) {
-      setPositions((prev) => [...prev, [x, 0, z]]);
-    } else {
-      setPositions((prev) => [...prev, [x, y, z]]);
-    }
+      positions.push([x, y, z]);
 
-    if (trailRef.current) {
       const lineGeometry = new THREE.BufferGeometry().setFromPoints(
         positions.map(([x, y, z]) => new THREE.Vector3(x, y, z))
       );
-      trailRef.current.geometry = lineGeometry;
+      templine.push(lineGeometry);
     }
+    setLines(templine);
+  }, [endpos]);
+
+  useFrame(() => {
+    const index = Math.min(Math.floor(time * 10), 1000);
+    setCurLine(lines[index]);
   });
 
   return (
     <group>
-      <line ref={trailRef}>
-        <bufferGeometry />
-        <lineBasicMaterial color="red" linewidth={0.5} />
-      </line>
+      {curline && (
+        <line>
+          <primitive object={curline} attach="geometry" />
+          <lineBasicMaterial color="red" linewidth={0.5} />
+        </line>
+      )}
     </group>
   );
 }
