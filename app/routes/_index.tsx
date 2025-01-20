@@ -2,10 +2,14 @@ import { useState } from "react";
 import Crimescene from "./components/crimescene";
 import Selector from "./components/selector";
 import TimeSlider from "./components/timeslider";
+import BloodContainer from "./components/bloodcontainer";
+import BloodProperties from "./components/bloodproperties";
 
 export default function Index() {
   const [time, setTime] = useState(0);
   const timeProps = { time, setTime };
+  const [focusBlood, setFocusBlood] = useState<number | null>(null);
+  const BloodContainerProps = { focusBlood, setFocusBlood };
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <div className="w-[75%] h-full gap-6 flex flex-col items-center justify-center">
@@ -18,14 +22,16 @@ export default function Index() {
           />
         </div>
         <div className="w-full grid grid-cols-4 h-[50%] gap-6">
-          <div className="rounded-lg col-span-1 w-full p-4 border-2 border-border text-gray-200">
-            Blank
-          </div>
+          <BloodContainer {...BloodContainerProps} />
           <div className="col-span-3 border-2 border-border rounded-lg">
-            <Crimescene {...timeProps} />
+            {focusBlood != null ? (
+              <BloodProperties />
+            ) : (
+              <Crimescene {...timeProps} />
+            )}
           </div>
         </div>
-        <TimeSlider {...timeProps} />
+        {focusBlood == null && <TimeSlider {...timeProps} />}
       </div>
     </div>
   );
