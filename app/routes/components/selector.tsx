@@ -14,7 +14,7 @@ export default function Selector({
   };
 
   return (
-    <div className="p-2">
+    <div className="p-4">
       <div className="text-gray-200 font-bold">{title}</div>
       <div className="mt-2">
         <select

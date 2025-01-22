@@ -1,17 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import { m6x6 } from "./matrix";
 import { atan2, cos, sin, sqrt, max, min, atan } from "mathjs";
+import { BloodPropertiesType } from "../types/blood";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 type Point = [number, number];
-const radToDeg = (radians: number): number => (radians * 180) / Math.PI;
+const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
 
-export default function EllipseCalculation({ file }: { file: File }) {
+export default function BloodProperties({
+  file,
+  focusBlood,
+  bloodProperties,
+  setBloodProperties,
+  setFocusBlood,
+}: {
+  file: File;
+  focusBlood: number;
+  bloodProperties: BloodPropertiesType[];
+  setBloodProperties: React.Dispatch<BloodPropertiesType[]>;
+  setFocusBlood: React.Dispatch<number | null>;
+}) {
   const [points, setPoints] = useState<Point[]>([]);
-  const [calculated, setCalculated] = useState(false);
-  const [results, setResults] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const [curBlood, setCurBlood] = useState<BloodPropertiesType>(
+    bloodProperties[focusBlood]
+  );
   const dotsize = 8;
+
+  console.log(curBlood);
 
   useEffect(() => {
     const reader = new FileReader();
@@ -22,18 +39,7 @@ export default function EllipseCalculation({ file }: { file: File }) {
     reader.readAsDataURL(file);
   }, [file]);
 
-  const rescale = (
-    value: number,
-    oldMin: number,
-    oldMax: number,
-    newMin: number,
-    newMax: number
-  ) => {
-    return ((value - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
-  };
-
   const handleMouseClick = (event: React.MouseEvent) => {
-    if (calculated) return;
     if (!imageRef.current) return;
     const rect = imageRef.current.getBoundingClientRect();
     const x = (100 * (event.clientX - dotsize / 2 - rect.left)) / rect.width; // Normalize by image width
@@ -50,7 +56,6 @@ export default function EllipseCalculation({ file }: { file: File }) {
     points
       .map(([x, y]) => [x ** 2, x * y, y ** 2, x, y, 1])
       .forEach((point) => matrix.push(point));
-    console.log(matrix);
     const [a, b, c, d, e, f] = m6x6(matrix);
     const r = atan2(b, a - c) / 2;
     const A = a * cos(r) ** 2 + b * sin(r) * cos(r) + c * sin(r) ** 2;
@@ -59,7 +64,6 @@ export default function EllipseCalculation({ file }: { file: File }) {
     const D = d * cos(r) + e * sin(r);
     const E = e * cos(r) - d * sin(r);
     const F = f;
-    console.log(A, B, C, D, E, F);
     const semimajor = max(
       sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
       sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
@@ -71,32 +75,65 @@ export default function EllipseCalculation({ file }: { file: File }) {
     const impactAngle = radToDeg(
       atan(sqrt(semiminor ** 2 / (semimajor ** 2 - semiminor ** 2)))
     );
-    console.log("Semimajor: ", semimajor);
-    console.log("Semiminor: ", semiminor);
-    console.log("Impact Angle: ", impactAngle);
+    if (focusBlood !== null) {
+      const updatedProperties = [...bloodProperties];
+      updatedProperties[focusBlood] = {
+        x: updatedProperties[focusBlood].x,
+        y: updatedProperties[focusBlood].y,
+        r: radToDeg(r).toFixed(2),
+        A: A.toExponential(2),
+        B: B.toExponential(2),
+        C: C.toExponential(2),
+        D: D.toExponential(2),
+        E: E.toExponential(2),
+        F: F.toExponential(2),
+        semimajor: semimajor,
+        semiminor: semiminor,
+        impactAngle: impactAngle.toFixed(2),
+      };
+      setBloodProperties(updatedProperties);
+      setCurBlood(updatedProperties[focusBlood]);
+    }
   }, [points]);
 
   return (
-    <div className="flex items-start justify-start w-full h-full">
-      {imageUrl && (
-        <div
-          className="h-full flex items-center justify-center relative"
-          onClick={handleMouseClick}
-        >
-          <img ref={imageRef} src={imageUrl} className="w-full rounded-t-md" />
-          {points.map(([x, y], index) => (
-            <div
-              key={index}
-              className="absolute bg-red-800 rounded-full w-2 h-2"
-              style={{
-                left: `${x}%`,
-                top: `${y}%`,
-              }}
-            />
-          ))}
+    <div className="flex flex-col items-start justify-center w-full h-full p-4 gap-2">
+      <button>
+        <FaArrowLeftLong size={24} onClick={() => setFocusBlood(null)} />
+      </button>
+      <div className="flex items-center justify-center w-full">
+        {imageUrl && (
+          <div
+            className="w-[75%] flex items-center justify-center relative"
+            onClick={handleMouseClick}
+          >
+            <img ref={imageRef} src={imageUrl} className="w-full rounded-md" />
+            {points.map(([x, y], index) => (
+              <div
+                key={index}
+                className="absolute bg-red-800 rounded-full w-2 h-2"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {focusBlood !== null && curBlood.r != null && (
+        <div className="mt-4 flex flex-col gap-2 items-center w-full">
+          <div>Rotation: {curBlood.r}°</div>
+          <div>
+            [ A, B, C, D, E, F ]: [{curBlood.A}, {curBlood.B}, {curBlood.C},{" "}
+            {curBlood.D}, {curBlood.E}, {curBlood.F}]
+          </div>
+          <div>
+            Semi-minor: {curBlood.semiminor}, Semi-major: {curBlood.semimajor}
+          </div>
+          <div>Impact Angle: {curBlood.impactAngle}°</div>
         </div>
       )}
-      <pre>{results}</pre>
     </div>
   );
 }
