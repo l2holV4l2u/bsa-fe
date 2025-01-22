@@ -1,24 +1,16 @@
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { Dispatch, SetStateAction, useState } from "react";
 import BloodDrop from "./blooddrop";
 import { HiOutlinePlus } from "react-icons/hi";
 
 export default function BloodContainer({
-  focusBlood,
+  files,
+  setFiles,
   setFocusBlood,
 }: {
-  focusBlood: number | null;
+  files: File[];
+  setFiles: Dispatch<SetStateAction<File[]>>;
   setFocusBlood: Dispatch<SetStateAction<number | null>>;
 }) {
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [activeID, setActiveID] = useState<string | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    // Handle drag and drop logic here if needed
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (uploadedFile) {
@@ -44,29 +36,14 @@ export default function BloodContainer({
           className="hidden"
         />
       </div>
-
-      {/* Drag and Drop Context */}
-      <DndContext
-        onDragStart={(event) => {
-          setActiveID(event.active.id as string);
-          setIsDragging(true);
-        }}
-        onDragEnd={(event) => {
-          setIsDragging(false);
-          setActiveID(null);
-          handleDragEnd(event);
-        }}
-      >
-        {/* Render Uploaded Files as BloodDrop Components */}
-        {files.map((file, index) => (
-          <button
-            onClick={() => setFocusBlood(index)}
-            className="border-2 border-border p-2 rounded-lg flex items-start justify-start gap-2"
-          >
-            <BloodDrop key={index} index={index} file={file} />
-          </button>
-        ))}
-      </DndContext>
+      {files.map((file, index) => (
+        <button
+          onClick={() => setFocusBlood(index)}
+          className="border-2 border-border p-2 rounded-lg flex items-start justify-start gap-2"
+        >
+          <BloodDrop key={index} index={index} file={file} />
+        </button>
+      ))}
     </div>
   );
 }

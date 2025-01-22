@@ -9,7 +9,8 @@ export default function Index() {
   const [time, setTime] = useState(0);
   const timeProps = { time, setTime };
   const [focusBlood, setFocusBlood] = useState<number | null>(null);
-  const BloodContainerProps = { focusBlood, setFocusBlood };
+  const [files, setFiles] = useState<File[]>([]);
+  const BloodContainerProps = { files, setFiles, setFocusBlood };
   return (
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <div className="w-[75%] h-full gap-6 flex flex-col items-center justify-center">
@@ -25,7 +26,7 @@ export default function Index() {
           <BloodContainer {...BloodContainerProps} />
           <div className="col-span-3 border-2 border-border rounded-lg">
             {focusBlood != null ? (
-              <BloodProperties />
+              <BloodProperties file={files[focusBlood]} />
             ) : (
               <Crimescene {...timeProps} />
             )}
