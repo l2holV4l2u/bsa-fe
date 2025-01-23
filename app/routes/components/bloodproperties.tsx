@@ -28,8 +28,6 @@ export default function BloodProperties({
   );
   const dotsize = 8;
 
-  console.log(curBlood);
-
   useEffect(() => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -38,6 +36,10 @@ export default function BloodProperties({
     };
     reader.readAsDataURL(file);
   }, [file]);
+
+  useEffect(() => {
+    setCurBlood(bloodProperties[focusBlood]);
+  }, [focusBlood]);
 
   const handleMouseClick = (event: React.MouseEvent) => {
     if (!imageRef.current) return;
@@ -80,6 +82,7 @@ export default function BloodProperties({
       updatedProperties[focusBlood] = {
         x: updatedProperties[focusBlood].x,
         y: updatedProperties[focusBlood].y,
+        rotation: updatedProperties[focusBlood].rotation,
         r: radToDeg(r).toFixed(2),
         A: A.toExponential(2),
         B: B.toExponential(2),
@@ -87,8 +90,8 @@ export default function BloodProperties({
         D: D.toExponential(2),
         E: E.toExponential(2),
         F: F.toExponential(2),
-        semimajor: semimajor,
-        semiminor: semiminor,
+        semimajor: semimajor.toFixed(3),
+        semiminor: semiminor.toFixed(3),
         impactAngle: impactAngle.toFixed(2),
       };
       setBloodProperties(updatedProperties);
@@ -97,21 +100,24 @@ export default function BloodProperties({
   }, [points]);
 
   return (
-    <div className="flex flex-col items-start justify-center w-full h-full p-4 gap-2">
+    <div
+      id={"bloodprop" + focusBlood}
+      className="flex flex-col items-start justify-start w-full h-full p-4 gap-2"
+    >
       <button>
         <FaArrowLeftLong size={24} onClick={() => setFocusBlood(null)} />
       </button>
-      <div className="flex items-center justify-center w-full">
+      <div className="w-full flex items-center justify-center h-1/2">
         {imageUrl && (
           <div
-            className="w-[75%] flex items-center justify-center relative"
+            className="flex h-full items-center justify-center relative"
             onClick={handleMouseClick}
           >
-            <img ref={imageRef} src={imageUrl} className="w-full rounded-md" />
+            <img ref={imageRef} src={imageUrl} className="h-full rounded-md" />
             {points.map(([x, y], index) => (
               <div
                 key={index}
-                className="absolute bg-red-800 rounded-full w-2 h-2"
+                className="absolute bg-red-200 rounded-full w-2 h-2"
                 style={{
                   left: `${x}%`,
                   top: `${y}%`,

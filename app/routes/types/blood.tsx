@@ -1,7 +1,8 @@
 export type BloodPropertiesType = {
   x: number;
   y: number;
-  r: number;
+  rotation: string;
+  r: string;
   A: string;
   B: string;
   C: string;
