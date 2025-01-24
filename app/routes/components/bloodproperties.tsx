@@ -8,24 +8,17 @@ type Point = [number, number];
 const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
 
 export default function BloodProperties({
-  file,
-  focusBlood,
-  bloodProperties,
-  setBloodProperties,
+  bloodPropertie,
+  setBloodPropertie,
   setFocusBlood,
 }: {
-  file: File;
-  focusBlood: number;
-  bloodProperties: BloodPropertiesType[];
-  setBloodProperties: React.Dispatch<BloodPropertiesType[]>;
-  setFocusBlood: React.Dispatch<number | null>;
+  bloodPropertie: BloodPropertiesType;
+  setBloodPropertie: (val: BloodPropertiesType) => void;
+  setFocusBlood: React.Dispatch<number>;
 }) {
   const [points, setPoints] = useState<Point[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const [curBlood, setCurBlood] = useState<BloodPropertiesType>(
-    bloodProperties[focusBlood]
-  );
   const dotsize = 8;
 
   useEffect(() => {
@@ -34,12 +27,8 @@ export default function BloodProperties({
       const imageUrl = e.target?.result as string;
       setImageUrl(imageUrl);
     };
-    reader.readAsDataURL(file);
-  }, [file]);
-
-  useEffect(() => {
-    setCurBlood(bloodProperties[focusBlood]);
-  }, [focusBlood]);
+    reader.readAsDataURL(bloodPropertie.file);
+  }, [bloodPropertie]);
 
   const handleMouseClick = (event: React.MouseEvent) => {
     if (!imageRef.current) return;
@@ -65,46 +54,44 @@ export default function BloodProperties({
     const D = d * cos(r) + e * sin(r);
     const E = e * cos(r) - d * sin(r);
     const F = f;
-    const semimajor = max(
-      sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
-      sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+    const semimajor = Number(
+      max(
+        sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
+        sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+      )
     );
-    const semiminor = min(
-      sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
-      sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+    const semiminor = Number(
+      min(
+        sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
+        sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+      )
     );
     const impactAngle = radToDeg(
       atan(sqrt(semiminor ** 2 / (semimajor ** 2 - semiminor ** 2)))
     );
-    if (focusBlood !== null) {
-      const updatedProperties = [...bloodProperties];
-      updatedProperties[focusBlood] = {
-        x: updatedProperties[focusBlood].x,
-        y: updatedProperties[focusBlood].y,
-        rotation: updatedProperties[focusBlood].rotation,
-        r: radToDeg(r).toFixed(2),
-        A: A.toExponential(2),
-        B: B.toExponential(2),
-        C: C.toExponential(2),
-        D: D.toExponential(2),
-        E: E.toExponential(2),
-        F: F.toExponential(2),
-        semimajor: semimajor.toFixed(3),
-        semiminor: semiminor.toFixed(3),
-        impactAngle: impactAngle.toFixed(2),
-      };
-      setBloodProperties(updatedProperties);
-      setCurBlood(updatedProperties[focusBlood]);
-    }
+    const updatedPropertie: BloodPropertiesType = {
+      file: bloodPropertie.file,
+      x: bloodPropertie.x,
+      y: bloodPropertie.y,
+      userrot: bloodPropertie.userrot,
+      calrot: Number(radToDeg(r).toFixed(2)),
+      A: A.toExponential(2),
+      B: B.toExponential(2),
+      C: C.toExponential(2),
+      D: D.toExponential(2),
+      E: E.toExponential(2),
+      F: F.toExponential(2),
+      semimajor: Number(semimajor.toFixed(3)),
+      semiminor: Number(semiminor.toFixed(3)),
+      impactAngle: Number(impactAngle.toFixed(2)),
+    };
+    setBloodPropertie(updatedPropertie);
   }, [points]);
 
   return (
-    <div
-      id={"bloodprop" + focusBlood}
-      className="flex flex-col items-start justify-start w-full h-full p-4 gap-2"
-    >
+    <div className="flex flex-col items-start justify-start w-full h-full p-4 gap-2">
       <button>
-        <FaArrowLeftLong size={24} onClick={() => setFocusBlood(null)} />
+        <FaArrowLeftLong size={24} onClick={() => setFocusBlood(-1)} />
       </button>
       <div className="w-full flex items-center justify-center h-1/2">
         {imageUrl && (
@@ -126,17 +113,19 @@ export default function BloodProperties({
           </div>
         )}
       </div>
-      {focusBlood !== null && curBlood.r != null && (
+      {bloodPropertie.calrot != null && (
         <div className="mt-4 flex flex-col gap-2 items-center w-full">
-          <div>Rotation: {curBlood.r}°</div>
+          <div>Rotation: {bloodPropertie.calrot}°</div>
           <div>
-            [ A, B, C, D, E, F ]: [{curBlood.A}, {curBlood.B}, {curBlood.C},{" "}
-            {curBlood.D}, {curBlood.E}, {curBlood.F}]
+            [ A, B, C, D, E, F ]: [{bloodPropertie.A}, {bloodPropertie.B},
+            {bloodPropertie.C}, {bloodPropertie.D}, {bloodPropertie.E},
+            {bloodPropertie.F}]
           </div>
           <div>
-            Semi-minor: {curBlood.semiminor}, Semi-major: {curBlood.semimajor}
+            Semi-minor: {bloodPropertie.semiminor}, Semi-major:{" "}
+            {bloodPropertie.semimajor}
           </div>
-          <div>Impact Angle: {curBlood.impactAngle}°</div>
+          <div>Impact Angle: {bloodPropertie.impactAngle}°</div>
         </div>
       )}
     </div>

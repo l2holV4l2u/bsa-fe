@@ -4,26 +4,18 @@ import Selector from "./components/selector";
 import TimeSlider from "./components/timeslider";
 import BloodContainer from "./components/bloodcontainer";
 import BloodProperties from "./components/bloodproperties";
+import { BloodPropertiesType } from "./types/blood";
 
 export default function Index() {
   const [time, setTime] = useState(0);
-  const timeProps = { time, setTime };
-  const [focusBlood, setFocusBlood] = useState<number | null>(null);
-  const [files, setFiles] = useState<File[]>([]);
-  const [bloodProperties, setBloodProperties] = useState<any[]>([]);
+  const [focusBlood, setFocusBlood] = useState<number>(-1);
+  const [bloodProperties, setBloodProperties] = useState<BloodPropertiesType[]>(
+    []
+  );
   const BloodContainerProps = {
-    files,
-    setFiles,
     setFocusBlood,
     bloodProperties,
     setBloodProperties,
-  };
-  const BloodPropertiesProps = {
-    file: files[focusBlood ? focusBlood : 0],
-    focusBlood,
-    bloodProperties,
-    setBloodProperties,
-    setFocusBlood,
   };
 
   return (
@@ -42,14 +34,24 @@ export default function Index() {
             <BloodContainer {...BloodContainerProps} />
           </div>
           <div className="col-span-7 border-2 border-border rounded-lg">
-            {focusBlood != null ? (
-              <BloodProperties {...BloodPropertiesProps} />
+            {focusBlood != -1 ? (
+              <BloodProperties
+                bloodPropertie={bloodProperties[focusBlood]}
+                setBloodPropertie={(val: BloodPropertiesType) => {
+                  setBloodProperties((prevProperties) => {
+                    const updatedProperties = [...prevProperties];
+                    updatedProperties[focusBlood] = val;
+                    return updatedProperties;
+                  });
+                }}
+                setFocusBlood={setFocusBlood}
+              />
             ) : (
-              <Crimescene {...timeProps} />
+              <Crimescene time={time} bloodProperties={bloodProperties} />
             )}
           </div>
         </div>
-        {focusBlood == null && <TimeSlider {...timeProps} />}
+        {focusBlood == -1 && <TimeSlider time={time} setTime={setTime} />}
       </div>
     </div>
   );

@@ -14,12 +14,12 @@ export default function BloodDrop({
   file: File;
   bloodPropertie: BloodPropertiesType;
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
-  setFocusBlood: Dispatch<SetStateAction<number | null>>;
+  setFocusBlood: Dispatch<SetStateAction<number>>;
   index: number;
 }) {
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
-  const [rotation, setRotation] = useState(String(bloodPropertie.r || 0));
+  const [rotation, setRotation] = useState(String(bloodPropertie.userrot || 0));
   useEffect(() => {
     setBloodProperties((prevProperties) => {
       const updatedProperties = prevProperties.map((item, i) => {

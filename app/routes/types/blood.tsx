@@ -1,15 +1,16 @@
 export type BloodPropertiesType = {
+  file: File;
   x: number;
   y: number;
-  rotation: string;
-  r: string;
+  userrot: number;
+  calrot: number;
   A: string;
   B: string;
   C: string;
   D: string;
   E: string;
   F: string;
-  semimajor: any;
-  semiminor: any;
+  semimajor: number;
+  semiminor: number;
   impactAngle: number;
 };

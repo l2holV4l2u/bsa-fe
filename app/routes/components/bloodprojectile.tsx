@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -19,7 +19,7 @@ export default function BloodProjectile({
     for (let i = 0; i <= 1000; i++) {
       const t = i / 1000;
       const x = endpos[0] * t;
-      const z = endpos[2] * t;
+      const z = endpos[1] * t;
       const v0 = 5;
       const g = 9.81;
       let y = v0 * t - 0.5 * g * t * t;

@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Time } from "../types/time";
 import { FaBackward, FaForward, FaPause, FaPlay } from "react-icons/fa";
 
-export default function TimeSlider({ time, setTime }: Time) {
+export default function TimeSlider({
+  time,
+  setTime,
+}: {
+  time: number;
+  setTime: React.Dispatch<number>;
+}) {
   const animationRef = useRef<number>();
   const lastUpdateTime = useRef<number>(0);
   const isAnimating = useRef<boolean>(false); // Track if the animation is running

@@ -4,23 +4,35 @@ import { HiOutlinePlus } from "react-icons/hi";
 import { BloodPropertiesType } from "../types/blood";
 
 export default function BloodContainer({
-  files,
-  setFiles,
   setFocusBlood,
   bloodProperties,
   setBloodProperties,
 }: {
-  files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
-  setFocusBlood: Dispatch<SetStateAction<number | null>>;
+  setFocusBlood: Dispatch<SetStateAction<number>>;
   bloodProperties: BloodPropertiesType[];
-  setBloodProperties: Dispatch<any>;
+  setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
 }) {
+  const defaultBlood = (uploadedFile: File) => ({
+    x: 0,
+    y: 0,
+    file: uploadedFile,
+    userrot: 0,
+    calrot: 0,
+    A: "",
+    B: "",
+    C: "",
+    D: "",
+    E: "",
+    F: "",
+    semimajor: "",
+    semiminor: "",
+    impactAngle: 0,
+  });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (uploadedFile) {
-      setBloodProperties((prev) => [...prev, { x: 0, y: 0 }]);
-      setFiles([...files, uploadedFile]);
+      setBloodProperties([...bloodProperties, defaultBlood(uploadedFile)]);
     }
   };
 
@@ -48,14 +60,11 @@ export default function BloodContainer({
       })
     );
     const validFiles = newFiles.filter((file) => file !== null);
-    setFiles((prev) => [...prev, ...validFiles]);
-    setBloodProperties((prev) => [
-      ...prev,
-      ...validFiles.map(() => ({ x: 0, y: 0 })),
+    setBloodProperties([
+      ...bloodProperties,
+      ...validFiles.map((validFile) => defaultBlood(validFile)),
     ]);
   };
-
-  console.log(bloodProperties);
 
   return (
     <div className="rounded-lg overflow-y-auto flex flex-col gap-2 w-full h-full p-4 border-2 border-border text-gray-200">
@@ -85,10 +94,10 @@ export default function BloodContainer({
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {files.map((file, index) => (
+        {bloodProperties.map((obj, index) => (
           <div className="border-2 border-border rounded-lg w-full flex items-start justify-start gap-2">
             <BloodDrop
-              file={file}
+              file={obj.file}
               bloodPropertie={bloodProperties[index]}
               setBloodProperties={setBloodProperties}
               setFocusBlood={setFocusBlood}
