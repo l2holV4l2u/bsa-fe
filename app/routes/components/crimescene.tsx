@@ -2,6 +2,8 @@ import { OrbitControls, PerspectiveCamera, Text } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import BloodProjectile from "./bloodprojectile";
 import { BloodPropertiesType } from "../types/blood";
+import { computeTrajectory } from "./computeTrajectory";
+import { useEffect, useState } from "react";
 
 export default function Crimescene({
   time,
@@ -10,6 +12,17 @@ export default function Crimescene({
   time: number;
   bloodProperties: BloodPropertiesType[];
 }) {
+  const [trajectories, setTrajectories] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Recompute trajectories only when bloodProperties changes
+    const newTrajectories = bloodProperties.map((prop) =>
+      computeTrajectory([prop.x, prop.y])
+    );
+    setTrajectories(newTrajectories);
+    console.log(trajectories);
+  }, [bloodProperties]); // Dependency array includes bloodProperties
+
   return (
     <Canvas>
       <PerspectiveCamera makeDefault position={[5, 5, 5]} />
@@ -25,10 +38,9 @@ export default function Crimescene({
       >
         (0, 0)
       </Text>
-      {bloodProperties.map((prop, index) => (
-        <BloodProjectile key={index} time={time} endpos={[prop.x, prop.y]} />
+      {trajectories.map((points, index) => (
+        <BloodProjectile key={index} time={time} points={points} />
       ))}
-
       <OrbitControls />
     </Canvas>
   );

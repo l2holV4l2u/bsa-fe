@@ -15,11 +15,11 @@ export default function TimeSlider({
 
   useEffect(() => {
     const animate = (currentTime: number) => {
-      if (!isAnimating.current) return; // Exit if animation is stopped
+      if (!isAnimating.current) return;
 
       if (currentTime - lastUpdateTime.current >= 100) {
-        const nextTime = time + 5;
-        setTime(nextTime >= 100 ? 100 : nextTime); // Stop at 100
+        const nextTime = time + 1;
+        setTime(nextTime >= 100 ? 100 : nextTime);
         lastUpdateTime.current = currentTime;
       }
       animationRef.current = requestAnimationFrame(animate);
