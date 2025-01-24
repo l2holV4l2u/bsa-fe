@@ -44,9 +44,8 @@ export default function BloodProperties({
   const handleMouseClick = (event: React.MouseEvent) => {
     if (!imageRef.current) return;
     const rect = imageRef.current.getBoundingClientRect();
-    const x = (100 * (event.clientX - dotsize / 2 - rect.left)) / rect.width; // Normalize by image width
-    const y = (100 * (event.clientY - dotsize / 2 - rect.top)) / rect.height; // Normalize by image height
-
+    const x = event.clientX - dotsize / 2 - rect.left;
+    const y = event.clientY - dotsize / 2 - rect.top;
     if (points.length < 5) {
       setPoints((prev) => [...prev, [x, y]]);
     }
@@ -119,8 +118,8 @@ export default function BloodProperties({
                 key={index}
                 className="absolute bg-red-200 rounded-full w-2 h-2"
                 style={{
-                  left: `${x}%`,
-                  top: `${y}%`,
+                  left: `${x}px`,
+                  top: `${y}px`,
                 }}
               />
             ))}

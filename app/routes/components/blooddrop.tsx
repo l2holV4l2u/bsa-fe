@@ -19,7 +19,7 @@ export default function BloodDrop({
 }) {
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
-  const [rotation, setRotation] = useState(String(bloodPropertie.r));
+  const [rotation, setRotation] = useState(String(bloodPropertie.r || 0));
   useEffect(() => {
     setBloodProperties((prevProperties) => {
       const updatedProperties = prevProperties.map((item, i) => {
