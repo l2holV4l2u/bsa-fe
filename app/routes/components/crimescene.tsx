@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { SettingsType } from "../types/settings";
 import BloodStraight from "./bloodstraight";
 import { computeEdge } from "./computeedge";
+import AOC from "./aoc";
 
 export default function Crimescene({
   time,
@@ -54,9 +55,9 @@ export default function Crimescene({
             end={computeEdge(dimension, [prop.x, prop.y], prop.userrot)}
           />
         ))}
-      {/*settings.showAOC &&
-        
-      */}
+      {settings.showAOC && (
+        <AOC bloodProperties={bloodProperties} dimension={dimension} />
+      )}
       <OrbitControls />
     </Canvas>
   );
