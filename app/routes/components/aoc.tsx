@@ -6,10 +6,10 @@ import { computeEdge } from "./computeedge";
 
 export default function AOC({
   bloodProperties,
-  dimension,
+  planeSize,
 }: {
   bloodProperties: BloodPropertiesType[];
-  dimension: number[];
+  planeSize: number;
 }) {
   const ringRef = useRef<THREE.Mesh>(null);
 
@@ -20,31 +20,40 @@ export default function AOC({
   }) => {
     let flag = true;
     bloodProperties.forEach((prop) => {
-      const { x, y, userrot } = prop;
-      const edge = computeEdge(dimension, [x, y], userrot);
-      const oripoint = new THREE.Vector3(x, 0, y);
-      const endpoint = new THREE.Vector3(edge[0], 0, edge[1]);
-      const line = new THREE.Line3(oripoint, endpoint);
+      const geometry = computeEdge(prop, planeSize).geometry;
+      const positions = geometry.getAttribute("position");
+      const startPoint = new THREE.Vector3(
+        positions.getX(0),
+        positions.getY(0),
+        positions.getZ(0)
+      );
+      const endPoint = new THREE.Vector3(
+        positions.getX(1),
+        positions.getY(1),
+        positions.getZ(1)
+      );
+      const line = new THREE.Line3(startPoint, endPoint);
       const closestPoint = new THREE.Vector3();
       line.closestPointToPoint(circleSphere.center, true, closestPoint);
       if (closestPoint.distanceTo(circleSphere.center) > circleSphere.radius) {
         flag = false;
+        return;
       }
     });
     return flag;
   };
 
   useEffect(() => {
-    let r = dimension[0] / 2,
+    let r = planeSize / 2,
       resX = -INFINITY,
       resY = -INFINITY,
       resR = -INFINITY;
 
     while (r > 0) {
-      let x = -dimension[0] / 2;
-      while (x < dimension[0] / 2) {
-        let y = -dimension[1] / 2;
-        while (y < dimension[1] / 2) {
+      let x = -planeSize / 2;
+      while (x < planeSize / 2) {
+        let y = -planeSize / 2;
+        while (y < planeSize / 2) {
           const circleSphere = new THREE.Sphere(new THREE.Vector3(x, 0, y), r);
           if (checkCollisions({ circleSphere })) {
             resX = x;

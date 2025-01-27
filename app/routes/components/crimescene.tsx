@@ -6,7 +6,7 @@ import { computeTrajectory } from "./computetrajectory";
 import { useEffect, useState } from "react";
 import { SettingsType } from "../types/settings";
 import BloodStraight from "./bloodstraight";
-import { computeEdge } from "./computeedge";
+import * as THREE from "three";
 import AOC from "./aoc";
 
 export default function Crimescene({
@@ -28,12 +28,54 @@ export default function Crimescene({
     setTrajectories(newTrajectories);
   }, [bloodProperties]);
 
+  const createAxisLine = (
+    start: THREE.Vector3,
+    end: THREE.Vector3,
+    color: string
+  ): THREE.Line => {
+    const material = new THREE.LineBasicMaterial({ color });
+    const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+    return new THREE.Line(geometry, material);
+  };
+
   return (
     <Canvas>
-      <PerspectiveCamera makeDefault position={[5, 5, 5]} />
+      <PerspectiveCamera makeDefault position={[-5, 5, 5]} />
       <ambientLight intensity={0.5} />
-      <directionalLight position={[3, 3, 3]} />
+      <directionalLight position={[3, 3, -3]} />
       <gridHelper args={[dimension[0], dimension[1]]} />
+      <primitive
+        object={createAxisLine(
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(10, 0, 0),
+          "blue"
+        )}
+      />
+      <primitive
+        object={createAxisLine(
+          new THREE.Vector3(0, 0, 0),
+          new THREE.Vector3(0, 0, -10), // Flip Z-axis direction
+          "green"
+        )}
+      />
+      <Text
+        position={[10.5, 0, 0]} // Positioning X label
+        fontSize={0.5}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+      >
+        X
+      </Text>
+      <Text
+        position={[0, 0, -10.5]} // Positioning Z label flipped
+        fontSize={0.5}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+      >
+        Y
+      </Text>
       <Text
         position={[0, -0.3, 0]}
         fontSize={0.25}
@@ -49,14 +91,10 @@ export default function Crimescene({
         ))}
       {settings.showSP &&
         bloodProperties.map((prop) => (
-          <BloodStraight
-            time={time}
-            ori={[prop.x, prop.y]}
-            end={computeEdge(dimension, [prop.x, prop.y], prop.userrot)}
-          />
+          <BloodStraight planeSize={dimension[0]} bloodPropertie={prop} />
         ))}
       {settings.showAOC && (
-        <AOC bloodProperties={bloodProperties} dimension={dimension} />
+        <AOC bloodProperties={bloodProperties} planeSize={dimension[0]} />
       )}
       <OrbitControls />
     </Canvas>

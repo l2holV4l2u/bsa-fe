@@ -24,8 +24,8 @@ export default function BloodContainer({
     D: "",
     E: "",
     F: "",
-    semimajor: "",
-    semiminor: "",
+    semimajor: 0,
+    semiminor: 0,
     impactAngle: 0,
   });
 
@@ -44,15 +44,8 @@ export default function BloodContainer({
     const newFiles = await Promise.all(
       sampleFilePaths.map(async (filePath) => {
         const response = await fetch(filePath);
-
-        if (!response.ok) {
-          console.error(`Failed to fetch ${filePath}: ${response.statusText}`);
-          return null;
-        }
-
         const blob = await response.blob();
         const fileName = filePath.split("/").pop() || "unknown.png";
-
         return new File([blob], fileName, {
           type: blob.type,
           lastModified: Date.now(),
@@ -68,7 +61,6 @@ export default function BloodContainer({
 
   return (
     <div className="rounded-lg overflow-y-auto flex flex-col gap-2 w-full h-full p-4 border-2 border-border text-gray-200">
-      {/* Add File Button */}
       <div className="w-full grid grid-cols-2 gap-2">
         <div>
           <label

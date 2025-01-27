@@ -27,7 +27,7 @@ export default function BloodDrop({
           return {
             ...item,
             x: Number(x),
-            y: Number(y),
+            y: -Number(y),
             userrot: Number(rotation),
           };
         }
