@@ -12,5 +12,6 @@ export type BloodPropertiesType = {
   F: string;
   semimajor: number;
   semiminor: number;
-  impactAngle: number;
+  theta: number;
+  AOI: number;
 };

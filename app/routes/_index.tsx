@@ -13,17 +13,18 @@ export default function Index() {
     []
   );
   const [settings, setSettings] = useState({
-    showTrajectory: false,
+    showTrajectory: true,
     showSP: true,
     showAOC: true,
     velocity: "Medium",
-    motion: "Straight",
-    material: "Cardboard",
+    motion: "Projectile",
+    material: "Paper",
+    planeSize: 20,
   });
 
   return (
     <div className="w-full max-h-screen h-screen flex flex-col items-center justify-center p-6">
-      <div className="w-[95%]  h-full gap-6 flex flex-col items-center justify-center">
+      <div className="w-[95%]  h-full gap-4 flex flex-col items-center justify-center">
         <Settings settings={settings} setSettings={setSettings} />
         <div className="w-full h-[64vh] grid grid-cols-10 gap-6">
           <div className="col-span-3 h-full overflow-y-auto">
@@ -37,6 +38,8 @@ export default function Index() {
             {focusBlood != -1 ? (
               <BloodProperties
                 bloodPropertie={bloodProperties[focusBlood]}
+                material={settings.material}
+                focusBlood={focusBlood}
                 setBloodPropertie={(val: BloodPropertiesType) => {
                   setBloodProperties((prevProperties) => {
                     const updatedProperties = [...prevProperties];

@@ -1,19 +1,22 @@
 import * as THREE from "three";
-import { useRef, useEffect, Dispatch, SetStateAction } from "react";
+import { useRef, useEffect, Dispatch, SetStateAction, useState } from "react";
 import { BloodPropertiesType } from "../types/blood";
-import { INFINITY } from "three/tsl";
 import { computeEdge } from "../functions/computeedge";
+import { Text } from "@react-three/drei";
 
 export default function AOC({
   bloodProperties,
   planeSize,
+  center,
   setCenter,
 }: {
   bloodProperties: BloodPropertiesType[];
   planeSize: number;
+  center: number[];
   setCenter: Dispatch<SetStateAction<number[]>>;
 }) {
   const ringRef = useRef<THREE.Mesh>(null);
+  const [r, setR] = useState(0);
 
   const checkCollisions = ({
     circleSphere,
@@ -39,6 +42,7 @@ export default function AOC({
       resX = 0,
       resY = 0,
       resR = 0;
+
     if (bloodProperties.length != 0) {
       while (lr < rr) {
         let x = -planeSize / 2;
@@ -66,7 +70,7 @@ export default function AOC({
     }
 
     setCenter([resX, resY]);
-    console.log(resX, resY);
+    setR(lr);
 
     if (ringRef.current) {
       ringRef.current.position.set(resX, 0, resY);
@@ -78,7 +82,7 @@ export default function AOC({
   return (
     <>
       <mesh ref={ringRef}>
-        <ringGeometry args={[0.9, 1, 64]} />
+        <ringGeometry args={[0.8, 1, 64]} />
         <meshBasicMaterial
           color="red"
           opacity={0.75}
@@ -86,6 +90,18 @@ export default function AOC({
           side={THREE.DoubleSide}
         />
       </mesh>
+
+      {bloodProperties.length != 0 && r >= 0.25 && (
+        <Text
+          position={[center[0], 0.3, center[1]]}
+          fontSize={0.25}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+        >
+          (h,k) = ({center[0]}, {center[1]}), r = {r.toFixed(2)}
+        </Text>
+      )}
     </>
   );
 }

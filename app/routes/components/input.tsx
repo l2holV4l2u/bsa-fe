@@ -11,7 +11,7 @@ export default function Input({
 }) {
   return (
     <div className="flex gap-2">
-      {label}:
+      <div className="w-4">{label}:</div>
       <input
         type="number"
         value={data}

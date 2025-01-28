@@ -9,10 +9,14 @@ const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
 
 export default function BloodProperties({
   bloodPropertie,
+  material,
+  focusBlood,
   setBloodPropertie,
   setFocusBlood,
 }: {
   bloodPropertie: BloodPropertiesType;
+  material: string;
+  focusBlood: number;
   setBloodPropertie: (val: BloodPropertiesType) => void;
   setFocusBlood: React.Dispatch<number>;
 }) {
@@ -39,6 +43,10 @@ export default function BloodProperties({
       setPoints((prev) => [...prev, [x, y]]);
     }
   };
+
+  useEffect(() => {
+    setPoints([]);
+  }, [focusBlood]);
 
   useEffect(() => {
     if (points.length < 5) return;
@@ -69,6 +77,29 @@ export default function BloodProperties({
     const impactAngle = radToDeg(
       atan(sqrt(semiminor ** 2 / (semimajor ** 2 - semiminor ** 2)))
     );
+    let AOI = impactAngle;
+    switch (material) {
+      case "Paper": {
+        AOI = -2.673 + 1.068 * impactAngle;
+        break;
+      }
+      case "Glass": {
+        AOI = -9.488 + 1.213 * impactAngle;
+        break;
+      }
+      case "Wood": {
+        AOI = -2.323 + 1.065 * impactAngle;
+        break;
+      }
+      case "Smooth Tile": {
+        AOI = -5.329 + 1.109 * impactAngle;
+        break;
+      }
+      case "Rough Tile": {
+        AOI = -7.775 + 1.206 * impactAngle;
+        break;
+      }
+    }
     const updatedPropertie: BloodPropertiesType = {
       file: bloodPropertie.file,
       x: bloodPropertie.x,
@@ -83,10 +114,11 @@ export default function BloodProperties({
       F: F.toExponential(2),
       semimajor: Number(semimajor.toFixed(3)),
       semiminor: Number(semiminor.toFixed(3)),
-      impactAngle: Number(impactAngle.toFixed(2)),
+      theta: Number(impactAngle.toFixed(2)),
+      AOI: Number(AOI.toFixed(2)),
     };
     setBloodPropertie(updatedPropertie);
-  }, [points]);
+  }, [points, material]);
 
   return (
     <div className="flex flex-col items-start justify-start w-full h-full p-4 gap-2">
@@ -125,7 +157,9 @@ export default function BloodProperties({
             Semi-minor: {bloodPropertie.semiminor}, Semi-major:{" "}
             {bloodPropertie.semimajor}
           </div>
-          <div>Impact Angle: {bloodPropertie.impactAngle}°</div>
+          <div>
+            AOI ({material}): {bloodPropertie.AOI}°
+          </div>
         </div>
       )}
     </div>

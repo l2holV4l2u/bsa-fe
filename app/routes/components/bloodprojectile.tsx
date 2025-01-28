@@ -21,7 +21,7 @@ export default function BloodProjectile({
 
   return (
     <line ref={lineRef}>
-      <lineBasicMaterial color="red" linewidth={0.5} />
+      <lineBasicMaterial color="#d68dd2" linewidth={0.5} />
     </line>
   );
 }

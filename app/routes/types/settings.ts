@@ -5,4 +5,5 @@ export type SettingsType = {
   velocity: string;
   motion: string;
   material: string;
+  planeSize: number;
 };

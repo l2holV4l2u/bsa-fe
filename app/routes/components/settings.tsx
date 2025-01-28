@@ -16,6 +16,7 @@ export default function Settings({
   const [velocity, setVelocity] = useState(settings.velocity);
   const [motion, setMotion] = useState(settings.motion);
   const [material, setMaterial] = useState(settings.material);
+  const [planeSize, setPlaneSize] = useState("20");
 
   useEffect(() => {
     setSettings({
@@ -25,11 +26,12 @@ export default function Settings({
       velocity,
       motion,
       material,
+      planeSize: Number(planeSize),
     });
-  }, [showTrajectory, showSP, showAOC, velocity, motion, material]);
+  }, [showTrajectory, showSP, showAOC, velocity, motion, material, planeSize]);
 
   return (
-    <div className="w-full flex rounded-lg justify-between items-center border-2 border-border">
+    <div className="w-full flex rounded-lg justify-between items-center border-2 border-border p-4">
       <Selector
         title="Velocity"
         choices={["Medium", "High"]}
@@ -38,24 +40,34 @@ export default function Settings({
       />
       <Selector
         title="Blood Motion"
-        choices={["Straight", "Projectile"]}
+        choices={["Projectile", "Free fall"]}
         selectedChoice={motion}
         setSelectedChoice={setMotion}
       />
       <Selector
         title="AOI Material"
-        choices={["Cardboard", "Glass", "Wood", "Smooth Tile", "Matt Tile"]}
+        choices={["Paper", "Glass", "Wood", "Smooth Tile", "Rough Tile"]}
         selectedChoice={material}
         setSelectedChoice={setMaterial}
       />
-      <div className="grid grid-cols-2 gap-2 p-4">
+      <div className="flex flex-col">
+        <div className="text-gray-200 font-bold">Plane Size</div>
+        <div className="mt-2">
+          <input
+            value={planeSize}
+            onChange={(e) => setPlaneSize(e.target.value)}
+            className="w-32 p-2 border rounded-md"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
         <Tickbox
-          title="Show Trajectories"
+          title="Show Blood Motion"
           data={showTrajectory}
           setData={setShowTrajectory}
         />
+        <Tickbox title="Show Blood Path" data={showSP} setData={setShowSP} />
         <Tickbox title="Show AOC" data={showAOC} setData={setShowAOC} />
-        <Tickbox title="Show Straight Path" data={showSP} setData={setShowSP} />
       </div>
     </div>
   );

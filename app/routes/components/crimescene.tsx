@@ -19,15 +19,14 @@ export default function Crimescene({
   settings: SettingsType;
 }) {
   const [trajectories, setTrajectories] = useState<any[]>([]);
-  const [planeSize, setPlaneSize] = useState(20);
   const [center, setCenter] = useState([0, 0]);
 
   useEffect(() => {
     const newTrajectories = bloodProperties.map((prop) =>
-      computeTrajectory(prop, center)
+      computeTrajectory(prop, center, settings.motion)
     );
     setTrajectories(newTrajectories);
-  }, [bloodProperties, center]);
+  }, [bloodProperties, center, settings]);
 
   const createAxisLine = (
     start: THREE.Vector3,
@@ -44,23 +43,23 @@ export default function Crimescene({
       <PerspectiveCamera makeDefault position={[-5, 5, 5]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 3, -3]} />
-      <gridHelper args={[planeSize, planeSize]} />
+      <gridHelper args={[settings.planeSize, settings.planeSize]} />
       <primitive
         object={createAxisLine(
           new THREE.Vector3(0, 0, 0),
-          new THREE.Vector3(10, 0, 0),
+          new THREE.Vector3(settings.planeSize / 2, 0, 0),
           "blue"
         )}
       />
       <primitive
         object={createAxisLine(
           new THREE.Vector3(0, 0, 0),
-          new THREE.Vector3(0, 0, -10),
+          new THREE.Vector3(0, 0, -settings.planeSize / 2),
           "green"
         )}
       />
       <Text
-        position={[10.5, 0, 0]}
+        position={[settings.planeSize / 2 + 0.5, 0, 0]}
         fontSize={0.5}
         color="white"
         anchorX="center"
@@ -69,7 +68,7 @@ export default function Crimescene({
         X
       </Text>
       <Text
-        position={[0, 0, -10.5]}
+        position={[0, 0, -settings.planeSize / 2 - 0.5]}
         fontSize={0.5}
         color="white"
         anchorX="center"
@@ -96,13 +95,17 @@ export default function Crimescene({
             prop.x &&
             prop.y &&
             prop.userrot && (
-              <BloodStraight planeSize={planeSize} bloodPropertie={prop} />
+              <BloodStraight
+                planeSize={settings.planeSize}
+                bloodPropertie={prop}
+              />
             )
         )}
       {settings.showAOC && (
         <AOC
           bloodProperties={bloodProperties}
-          planeSize={planeSize}
+          planeSize={settings.planeSize}
+          center={center}
           setCenter={setCenter}
         />
       )}

@@ -36,19 +36,10 @@ export default function BloodStraight({
         <bufferGeometry />
       </line>
       <mesh ref={dotRef}>
-        <sphereGeometry args={[0.1, 16, 16]} />
+        <sphereGeometry args={[0.075, 12, 12]} />
         <meshBasicMaterial color="red" />
       </mesh>
-      <arrowHelper
-        args={[
-          direction,
-          new THREE.Vector3().copy(line.end).sub(direction.multiplyScalar(10)),
-          10,
-          0xff0000,
-          0.2,
-          0.2,
-        ]}
-      />
+      <arrowHelper args={[direction, line.end, 0.01, 0xe1e97b, 0.2, 0.2]} />
     </>
   );
 }

@@ -3,20 +3,31 @@ import BloodDrop from "./blooddrop";
 import { HiOutlinePlus } from "react-icons/hi";
 import { BloodPropertiesType } from "../types/blood";
 
+function getRandomInRange(min: number, max: number): number {
+  return Number((Math.random() * (max - min) + min).toFixed(2));
+}
+
 export default function BloodContainer({
-  setFocusBlood,
   bloodProperties,
+  setFocusBlood,
   setBloodProperties,
 }: {
-  setFocusBlood: Dispatch<SetStateAction<number>>;
   bloodProperties: BloodPropertiesType[];
+  setFocusBlood: Dispatch<SetStateAction<number>>;
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
 }) {
-  const defaultBlood = (uploadedFile: File) => ({
-    x: 0,
-    y: 0,
+  const [isDelete, setIsDelete] = useState(false);
+  const defaultBlood = (
+    uploadedFile: File,
+    angle: number,
+    x: number,
+    y: number,
+    userrot: number
+  ) => ({
+    x,
+    y,
     file: uploadedFile,
-    userrot: 0,
+    userrot,
     calrot: 0,
     A: "",
     B: "",
@@ -26,13 +37,17 @@ export default function BloodContainer({
     F: "",
     semimajor: 0,
     semiminor: 0,
-    impactAngle: 0,
+    theta: angle,
+    AOI: angle,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (uploadedFile) {
-      setBloodProperties([...bloodProperties, defaultBlood(uploadedFile)]);
+      setBloodProperties([
+        ...bloodProperties,
+        defaultBlood(uploadedFile, 0, 0, 0, 0),
+      ]);
     }
   };
 
@@ -55,7 +70,15 @@ export default function BloodContainer({
     const validFiles = newFiles.filter((file) => file !== null);
     setBloodProperties([
       ...bloodProperties,
-      ...validFiles.map((validFile) => defaultBlood(validFile)),
+      ...validFiles.map((validFile) =>
+        defaultBlood(
+          validFile,
+          30,
+          getRandomInRange(-5, 5),
+          getRandomInRange(-5, 5),
+          getRandomInRange(0, 45)
+        )
+      ),
     ]);
   };
 
@@ -91,9 +114,11 @@ export default function BloodContainer({
             <BloodDrop
               file={obj.file}
               bloodPropertie={bloodProperties[index]}
+              index={index}
+              isDelete={isDelete}
+              setIsDelete={setIsDelete}
               setBloodProperties={setBloodProperties}
               setFocusBlood={setFocusBlood}
-              index={index}
             />
           </div>
         ))}
