@@ -12,7 +12,7 @@ export default function BloodProjectile({
 
   useEffect(() => {
     if (lineRef.current) {
-      const index = Math.min(Math.floor(time * 10), points.length - 1);
+      const index = Math.min(Math.floor(time), points.length - 1);
       const visiblePoints = points.slice(0, index + 1);
       const geometry = new THREE.BufferGeometry().setFromPoints(visiblePoints);
       lineRef.current.geometry = geometry;

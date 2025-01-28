@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, Dispatch, SetStateAction } from "react";
 import { BloodPropertiesType } from "../types/blood";
 import { INFINITY } from "three/tsl";
 import { computeEdge } from "../functions/computeedge";
@@ -7,9 +7,11 @@ import { computeEdge } from "../functions/computeedge";
 export default function AOC({
   bloodProperties,
   planeSize,
+  setCenter,
 }: {
   bloodProperties: BloodPropertiesType[];
   planeSize: number;
+  setCenter: Dispatch<SetStateAction<number[]>>;
 }) {
   const ringRef = useRef<THREE.Mesh>(null);
 
@@ -34,30 +36,37 @@ export default function AOC({
   useEffect(() => {
     let lr = -planeSize / 2,
       rr = -lr,
-      resX = -INFINITY,
-      resY = -INFINITY,
-      resR = -INFINITY;
-
-    while (lr < rr) {
-      let x = -planeSize / 2;
-      let mr = (lr + rr) / 2;
-      let flag = false;
-      while (x < planeSize / 2) {
-        let y = -planeSize / 2;
-        while (y < planeSize / 2) {
-          const circleSphere = new THREE.Sphere(new THREE.Vector3(x, 0, y), mr);
-          if (checkCollisions({ circleSphere })) {
-            flag = true;
-            resX = x;
-            resY = y;
-            resR = mr;
+      resX = 0,
+      resY = 0,
+      resR = 0;
+    if (bloodProperties.length != 0) {
+      while (lr < rr) {
+        let x = -planeSize / 2;
+        let mr = (lr + rr) / 2;
+        let flag = false;
+        while (x < planeSize / 2) {
+          let y = -planeSize / 2;
+          while (y < planeSize / 2) {
+            const circleSphere = new THREE.Sphere(
+              new THREE.Vector3(x, 0, y),
+              mr
+            );
+            if (checkCollisions({ circleSphere })) {
+              flag = true;
+              resX = x;
+              resY = y;
+              resR = mr;
+            }
+            y += 0.5;
           }
-          y += 0.5;
+          x += 0.5;
         }
-        x += 0.5;
+        flag ? (rr = mr) : (lr = mr + 0.25);
       }
-      flag ? (rr = mr) : (lr = mr + 0.25);
     }
+
+    setCenter([resX, resY]);
+    console.log(resX, resY);
 
     if (ringRef.current) {
       ringRef.current.position.set(resX, 0, resY);

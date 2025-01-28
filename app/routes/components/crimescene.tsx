@@ -19,14 +19,15 @@ export default function Crimescene({
   settings: SettingsType;
 }) {
   const [trajectories, setTrajectories] = useState<any[]>([]);
-  const [dimension, setDimension] = useState([20, 20]);
+  const [planeSize, setPlaneSize] = useState(20);
+  const [center, setCenter] = useState([0, 0]);
 
   useEffect(() => {
     const newTrajectories = bloodProperties.map((prop) =>
-      computeTrajectory([prop.x, prop.y])
+      computeTrajectory(prop, center)
     );
     setTrajectories(newTrajectories);
-  }, [bloodProperties]);
+  }, [bloodProperties, center]);
 
   const createAxisLine = (
     start: THREE.Vector3,
@@ -43,7 +44,7 @@ export default function Crimescene({
       <PerspectiveCamera makeDefault position={[-5, 5, 5]} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 3, -3]} />
-      <gridHelper args={[dimension[0], dimension[1]]} />
+      <gridHelper args={[planeSize, planeSize]} />
       <primitive
         object={createAxisLine(
           new THREE.Vector3(0, 0, 0),
@@ -90,11 +91,20 @@ export default function Crimescene({
           <BloodProjectile key={index} time={time} points={points} />
         ))}
       {settings.showSP &&
-        bloodProperties.map((prop) => (
-          <BloodStraight planeSize={dimension[0]} bloodPropertie={prop} />
-        ))}
+        bloodProperties.map(
+          (prop) =>
+            prop.x &&
+            prop.y &&
+            prop.userrot && (
+              <BloodStraight planeSize={planeSize} bloodPropertie={prop} />
+            )
+        )}
       {settings.showAOC && (
-        <AOC bloodProperties={bloodProperties} planeSize={dimension[0]} />
+        <AOC
+          bloodProperties={bloodProperties}
+          planeSize={planeSize}
+          setCenter={setCenter}
+        />
       )}
       <OrbitControls />
     </Canvas>
