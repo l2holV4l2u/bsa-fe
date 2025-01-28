@@ -2,7 +2,7 @@ import { OrbitControls, PerspectiveCamera, Text } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import BloodProjectile from "./bloodprojectile";
 import { BloodPropertiesType } from "../types/blood";
-import { computeTrajectory } from "./computetrajectory";
+import { computeTrajectory } from "../functions/computetrajectory";
 import { useEffect, useState } from "react";
 import { SettingsType } from "../types/settings";
 import BloodStraight from "./bloodstraight";
@@ -54,12 +54,12 @@ export default function Crimescene({
       <primitive
         object={createAxisLine(
           new THREE.Vector3(0, 0, 0),
-          new THREE.Vector3(0, 0, -10), // Flip Z-axis direction
+          new THREE.Vector3(0, 0, -10),
           "green"
         )}
       />
       <Text
-        position={[10.5, 0, 0]} // Positioning X label
+        position={[10.5, 0, 0]}
         fontSize={0.5}
         color="white"
         anchorX="center"
@@ -68,7 +68,7 @@ export default function Crimescene({
         X
       </Text>
       <Text
-        position={[0, 0, -10.5]} // Positioning Z label flipped
+        position={[0, 0, -10.5]}
         fontSize={0.5}
         color="white"
         anchorX="center"

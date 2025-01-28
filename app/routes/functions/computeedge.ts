@@ -26,8 +26,5 @@ export function computeEdge(
     .copy(direction)
     .multiplyScalar(maxDistance)
     .add(new THREE.Vector3(x, 0, y));
-  const points = [new THREE.Vector3(x, 0, y), endPoint];
-  const geometry = new THREE.BufferGeometry().setFromPoints(points);
-  const material = new THREE.LineBasicMaterial({ color: "red" });
-  return new THREE.Line(geometry, material);
+  return new THREE.Line3(new THREE.Vector3(x, 0, y), endPoint);
 }

@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { useRef, useEffect } from "react";
 import { BloodPropertiesType } from "../types/blood";
 import { INFINITY } from "three/tsl";
-import { computeEdge } from "./computeedge";
+import { computeEdge } from "../functions/computeedge";
 
 export default function AOC({
   bloodProperties,
@@ -20,19 +20,7 @@ export default function AOC({
   }) => {
     let flag = true;
     bloodProperties.forEach((prop) => {
-      const geometry = computeEdge(prop, planeSize).geometry;
-      const positions = geometry.getAttribute("position");
-      const startPoint = new THREE.Vector3(
-        positions.getX(0),
-        positions.getY(0),
-        positions.getZ(0)
-      );
-      const endPoint = new THREE.Vector3(
-        positions.getX(1),
-        positions.getY(1),
-        positions.getZ(1)
-      );
-      const line = new THREE.Line3(startPoint, endPoint);
+      const line = computeEdge(prop, planeSize);
       const closestPoint = new THREE.Vector3();
       line.closestPointToPoint(circleSphere.center, true, closestPoint);
       if (closestPoint.distanceTo(circleSphere.center) > circleSphere.radius) {
@@ -44,27 +32,31 @@ export default function AOC({
   };
 
   useEffect(() => {
-    let r = planeSize / 2,
+    let lr = -planeSize / 2,
+      rr = -lr,
       resX = -INFINITY,
       resY = -INFINITY,
       resR = -INFINITY;
 
-    while (r > 0) {
+    while (lr < rr) {
       let x = -planeSize / 2;
+      let mr = (lr + rr) / 2;
+      let flag = false;
       while (x < planeSize / 2) {
         let y = -planeSize / 2;
         while (y < planeSize / 2) {
-          const circleSphere = new THREE.Sphere(new THREE.Vector3(x, 0, y), r);
+          const circleSphere = new THREE.Sphere(new THREE.Vector3(x, 0, y), mr);
           if (checkCollisions({ circleSphere })) {
+            flag = true;
             resX = x;
             resY = y;
-            resR = r;
+            resR = mr;
           }
           y += 0.5;
         }
         x += 0.5;
       }
-      r -= 0.5;
+      flag ? (rr = mr) : (lr = mr + 0.25);
     }
 
     if (ringRef.current) {

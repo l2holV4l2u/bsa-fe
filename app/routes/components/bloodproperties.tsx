@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { m6x6 } from "./matrix";
+import { m6x6 } from "../functions/matrix";
 import { atan2, cos, sin, sqrt, max, min, atan } from "mathjs";
 import { BloodPropertiesType } from "../types/blood";
 import { FaArrowLeftLong } from "react-icons/fa6";
