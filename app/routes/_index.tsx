@@ -16,10 +16,10 @@ export default function Index() {
     showTrajectory: true,
     showSP: true,
     showAOC: true,
-    velocity: "Medium",
     motion: "Projectile",
     material: "Paper",
     planeSize: 20,
+    height: 1.8,
   });
 
   return (
@@ -29,6 +29,7 @@ export default function Index() {
         <div className="w-full h-[64vh] grid grid-cols-10 gap-6">
           <div className="col-span-3 h-full overflow-y-auto">
             <BloodContainer
+              settings={settings}
               setFocusBlood={setFocusBlood}
               bloodProperties={bloodProperties}
               setBloodProperties={setBloodProperties}

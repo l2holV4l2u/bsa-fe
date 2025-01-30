@@ -2,6 +2,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import BloodDrop from "./blooddrop";
 import { HiOutlinePlus } from "react-icons/hi";
 import { BloodPropertiesType } from "../types/blood";
+import * as THREE from "three";
+import { SettingsType } from "../types/settings";
 
 function getRandomInRange(min: number, max: number): number {
   return Number((Math.random() * (max - min) + min).toFixed(2));
@@ -9,10 +11,12 @@ function getRandomInRange(min: number, max: number): number {
 
 export default function BloodContainer({
   bloodProperties,
+  settings,
   setFocusBlood,
   setBloodProperties,
 }: {
   bloodProperties: BloodPropertiesType[];
+  settings: SettingsType;
   setFocusBlood: Dispatch<SetStateAction<number>>;
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
 }) {
@@ -39,6 +43,10 @@ export default function BloodContainer({
     semiminor: 0,
     theta: angle,
     AOI: angle,
+    edge: new THREE.Line3(
+      new THREE.Vector3(x, 0, y),
+      new THREE.Vector3(0, 0, 0)
+    ),
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,8 +82,8 @@ export default function BloodContainer({
         defaultBlood(
           validFile,
           30,
-          getRandomInRange(-5, 5),
-          getRandomInRange(-5, 5),
+          getRandomInRange(5, 15),
+          getRandomInRange(5, 15),
           getRandomInRange(0, 45)
         )
       ),
@@ -109,13 +117,14 @@ export default function BloodContainer({
         </button>
       </div>
       <div className="flex flex-col gap-2">
-        {bloodProperties.map((obj, index) => (
+        {bloodProperties.map((prop, index) => (
           <div className="border-2 border-border rounded-lg w-full flex items-start justify-start gap-2">
             <BloodDrop
-              file={obj.file}
+              file={prop.file}
               bloodPropertie={bloodProperties[index]}
               index={index}
               isDelete={isDelete}
+              settings={settings}
               setIsDelete={setIsDelete}
               setBloodProperties={setBloodProperties}
               setFocusBlood={setFocusBlood}

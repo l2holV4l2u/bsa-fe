@@ -13,34 +13,28 @@ export default function Settings({
   const [showTrajectory, setShowTrajectory] = useState(settings.showTrajectory);
   const [showSP, setShowSP] = useState(settings.showSP);
   const [showAOC, setShowAOC] = useState(settings.showAOC);
-  const [velocity, setVelocity] = useState(settings.velocity);
   const [motion, setMotion] = useState(settings.motion);
   const [material, setMaterial] = useState(settings.material);
   const [planeSize, setPlaneSize] = useState("20");
+  const [height, setHeight] = useState("1.8");
 
   useEffect(() => {
     setSettings({
       showTrajectory,
       showSP,
       showAOC,
-      velocity,
       motion,
       material,
       planeSize: Number(planeSize),
+      height: Number(height),
     });
-  }, [showTrajectory, showSP, showAOC, velocity, motion, material, planeSize]);
+  }, [showTrajectory, showSP, showAOC, motion, material, planeSize, height]);
 
   return (
     <div className="w-full flex rounded-lg justify-between items-center border-2 border-border p-4">
       <Selector
-        title="Velocity"
-        choices={["Medium", "High"]}
-        selectedChoice={velocity}
-        setSelectedChoice={setVelocity}
-      />
-      <Selector
         title="Blood Motion"
-        choices={["Projectile", "Free fall"]}
+        choices={["Projectile", "Free fall", "Straight"]}
         selectedChoice={motion}
         setSelectedChoice={setMotion}
       />
@@ -56,6 +50,16 @@ export default function Settings({
           <input
             value={planeSize}
             onChange={(e) => setPlaneSize(e.target.value)}
+            className="w-32 p-2 border rounded-md"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col">
+        <div className="text-gray-200 font-bold">Victim's Height</div>
+        <div className="mt-2">
+          <input
+            value={height}
+            onChange={(e) => setHeight(e.target.value)}
             className="w-32 p-2 border rounded-md"
           />
         </div>

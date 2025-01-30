@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export type BloodPropertiesType = {
   file: File;
   x: number;
@@ -14,4 +16,5 @@ export type BloodPropertiesType = {
   semiminor: number;
   theta: number;
   AOI: number;
+  edge: THREE.Line3;
 };

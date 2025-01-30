@@ -1,33 +1,33 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { BloodPropertiesType } from "../types/blood";
-import { computeEdge } from "../functions/computeedge";
 
 export default function BloodStraight({
   planeSize,
-  bloodPropertie,
+  edge,
+  angle,
 }: {
   planeSize: number;
-  bloodPropertie: BloodPropertiesType;
+  edge: THREE.Line3;
+  angle: number;
 }) {
   const lineRef = useRef<THREE.Line>(null);
   const dotRef = useRef<THREE.Mesh>(null);
-  const line = computeEdge(bloodPropertie, planeSize);
-  const direction = new THREE.Vector3()
-    .subVectors(line.end, line.start)
-    .normalize();
-
+  const angleRef = useRef<THREE.ArrowHelper>(null);
+  const [direction, setDirection] = useState(new THREE.Vector3(0, 0, 0));
   useEffect(() => {
+    setDirection(
+      new THREE.Vector3().subVectors(edge.end, edge.start).normalize()
+    );
     if (lineRef.current) {
       lineRef.current.geometry = new THREE.BufferGeometry().setFromPoints([
-        line.start,
-        line.end,
+        edge.start,
+        edge.end,
       ]);
     }
     if (dotRef.current) {
-      dotRef.current.position.set(line.start.x, line.start.y, line.start.z);
+      dotRef.current.position.set(edge.start.x, edge.start.y, edge.start.z);
     }
-  }, [bloodPropertie, planeSize]);
+  }, [edge, planeSize]);
 
   return (
     <>
@@ -39,7 +39,7 @@ export default function BloodStraight({
         <sphereGeometry args={[0.075, 12, 12]} />
         <meshBasicMaterial color="red" />
       </mesh>
-      <arrowHelper args={[direction, line.end, 0.01, 0xe1e97b, 0.2, 0.2]} />
+      <arrowHelper args={[direction, edge.end, 0.01, 0xe1e97b, 0.2, 0.2]} />
     </>
   );
 }

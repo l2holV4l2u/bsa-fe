@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { useRef, useEffect, Dispatch, SetStateAction, useState } from "react";
 import { BloodPropertiesType } from "../types/blood";
-import { computeEdge } from "../functions/computeedge";
 import { Text } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 
 export default function AOC({
   bloodProperties,
@@ -15,6 +15,7 @@ export default function AOC({
   center: number[];
   setCenter: Dispatch<SetStateAction<number[]>>;
 }) {
+  const textRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const [r, setR] = useState(0);
 
@@ -25,9 +26,8 @@ export default function AOC({
   }) => {
     let flag = true;
     bloodProperties.forEach((prop) => {
-      const line = computeEdge(prop, planeSize);
       const closestPoint = new THREE.Vector3();
-      line.closestPointToPoint(circleSphere.center, true, closestPoint);
+      prop.edge.closestPointToPoint(circleSphere.center, true, closestPoint);
       if (closestPoint.distanceTo(circleSphere.center) > circleSphere.radius) {
         flag = false;
         return;
@@ -68,16 +68,20 @@ export default function AOC({
         flag ? (rr = mr) : (lr = mr + 0.25);
       }
     }
-
     setCenter([resX, resY]);
     setR(lr);
-
     if (ringRef.current) {
       ringRef.current.position.set(resX, 0, resY);
       ringRef.current.scale.set(resR, resR, 1);
       ringRef.current.rotation.x = Math.PI / 2;
     }
   }, [bloodProperties]);
+
+  useFrame(({ camera }) => {
+    if (textRef.current) {
+      textRef.current.lookAt(camera.position);
+    }
+  });
 
   return (
     <>
@@ -90,16 +94,16 @@ export default function AOC({
           side={THREE.DoubleSide}
         />
       </mesh>
-
       {bloodProperties.length != 0 && r >= 0.25 && (
         <Text
-          position={[center[0], 0.3, center[1]]}
+          ref={textRef}
+          position={[center[0], -0.3, center[1]]}
           fontSize={0.25}
           color="white"
           anchorX="center"
           anchorY="middle"
         >
-          (h,k) = ({center[0]}, {center[1]}), r = {r.toFixed(2)}
+          (h,k) = ({center[0]}, {-center[1]}), r = {r.toFixed(2)}
         </Text>
       )}
     </>

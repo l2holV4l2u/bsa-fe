@@ -3,12 +3,15 @@ import { BloodPropertiesType } from "../types/blood";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import Input from "./input";
+import { computeEdge } from "../functions/computeedge";
+import { SettingsType } from "../types/settings";
 
 export default function BloodDrop({
   file,
   bloodPropertie,
   index,
   isDelete,
+  settings,
   setIsDelete,
   setBloodProperties,
   setFocusBlood,
@@ -17,6 +20,7 @@ export default function BloodDrop({
   bloodPropertie: BloodPropertiesType;
   index: number;
   isDelete: boolean;
+  settings: SettingsType;
   setIsDelete: Dispatch<SetStateAction<boolean>>;
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
   setFocusBlood: Dispatch<SetStateAction<number>>;
@@ -30,6 +34,13 @@ export default function BloodDrop({
       setBloodProperties((prevProperties) => {
         const updatedProperties = prevProperties.map((item, i) => {
           if (i === index) {
+            computeEdge(
+              bloodPropertie,
+              settings.planeSize,
+              Number(x),
+              -Number(y),
+              Number(rotation)
+            );
             return {
               ...item,
               x: Number(x),
@@ -47,7 +58,7 @@ export default function BloodDrop({
   useEffect(() => {
     if (isDelete) {
       setX(String(bloodPropertie.x));
-      setY(String(bloodPropertie.y));
+      setY(String(-bloodPropertie.y));
       setRotation(String(bloodPropertie.userrot || 0));
     }
     setIsDelete(false);

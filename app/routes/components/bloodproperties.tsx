@@ -116,6 +116,7 @@ export default function BloodProperties({
       semiminor: Number(semiminor.toFixed(3)),
       theta: Number(impactAngle.toFixed(2)),
       AOI: Number(AOI.toFixed(2)),
+      edge: bloodPropertie.edge,
     };
     setBloodPropertie(updatedPropertie);
   }, [points, material]);
