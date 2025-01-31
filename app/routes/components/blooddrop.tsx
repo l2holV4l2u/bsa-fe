@@ -90,9 +90,11 @@ export default function BloodDrop({
             <Input label="y" data={y} setData={setY} />
             <Input label="r" data={rotation} setData={setRotation} />
           </div>
-          <div className="text-sm col-span-1 py-2">
-            height: {bloodHeight[index].toFixed(2)}
-          </div>
+          {bloodHeight[index] != undefined && (
+            <div className="text-sm col-span-1 py-2">
+              height: {bloodHeight[index].toFixed(2)}
+            </div>
+          )}
         </div>
         <div className="flex gap-2 p-2 items-center">
           <button onClick={() => handleDelete(index)}>
