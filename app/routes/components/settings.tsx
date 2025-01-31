@@ -10,8 +10,7 @@ export default function Settings() {
   const [showAOC, setShowAOC] = useState(settings.showAOC);
   const [motion, setMotion] = useState(settings.motion);
   const [material, setMaterial] = useState(settings.material);
-  const [planeSize, setPlaneSize] = useState("25");
-  const [height, setHeight] = useState("1.8");
+  const [planeSize, setPlaneSize] = useState("20");
 
   useEffect(() => {
     setSettings({
@@ -21,9 +20,8 @@ export default function Settings() {
       motion,
       material,
       planeSize: Number(planeSize),
-      height: Number(height),
     });
-  }, [showTrajectory, showSP, showAOC, motion, material, planeSize, height]);
+  }, [showTrajectory, showSP, showAOC, motion, material, planeSize]);
 
   useEffect(() => {
     let maxSize = 20;
@@ -53,16 +51,6 @@ export default function Settings() {
           <input
             value={planeSize}
             onChange={(e) => setPlaneSize(e.target.value)}
-            className="w-32 p-2 border rounded-md"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <div className="text-gray-200 font-bold">Victim's Height</div>
-        <div className="mt-2">
-          <input
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
             className="w-32 p-2 border rounded-md"
           />
         </div>

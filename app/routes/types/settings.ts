@@ -5,5 +5,4 @@ export type SettingsType = {
   motion: string;
   material: string;
   planeSize: number;
-  height: number;
 };

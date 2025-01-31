@@ -5,7 +5,7 @@ import Crimescene from "./components/crimescene";
 import TimeSlider from "./components/timeslider";
 import { AppContext } from "./functions/context";
 import Settings from "./components/settings";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Index() {
   const [settings, setSettings] = useState({
@@ -15,7 +15,6 @@ export default function Index() {
     motion: "Projectile",
     material: "Paper",
     planeSize: 20,
-    height: 1.8,
   });
   const [time, setTime] = useState(0);
   const [focusBlood, setFocusBlood] = useState<number>(-1);

@@ -5,7 +5,6 @@ import { AppContext } from "../functions/context";
 export default function BloodStraight() {
   const { bloodProperties, settings } = useContext(AppContext);
   const lineRefs = useRef<(THREE.Mesh | undefined)[]>([]);
-  const angleRefs = useRef<(THREE.ArrowHelper | undefined)[]>([]);
   const directionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
   const rotatedDirectionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
 
@@ -54,17 +53,6 @@ export default function BloodStraight() {
                 "red",
                 arrowSize,
                 arrowSize,
-              ]}
-            />
-            <arrowHelper
-              ref={(el) => (angleRefs.current[index] = el)}
-              args={[
-                rotatedDirectionRefs.current[index],
-                edge.start,
-                1,
-                0xe1e97b,
-                arrowSize / 2,
-                arrowSize / 2,
               ]}
             />
           </group>

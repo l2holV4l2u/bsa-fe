@@ -6,7 +6,8 @@ import { AppContext, CrimeSceneContext } from "../functions/context";
 
 export default function AOC() {
   const { bloodProperties, settings } = useContext(AppContext);
-  const { center, setCenter, vicHeight } = useContext(CrimeSceneContext);
+  const { center, setCenter, impact, vicHeight } =
+    useContext(CrimeSceneContext);
   const planeSize = settings.planeSize;
   const textRef = useRef<THREE.Mesh>(null);
   const centerRef = useRef<THREE.Mesh>(null);
@@ -64,7 +65,7 @@ export default function AOC() {
       }
     }
     setCenter([resX, resY]);
-    const safeR = Math.max(r, 0.25);
+    const safeR = Math.max(r, 1);
     setInnerRadius(Math.max(1 - 1 / (2.5 * safeR), 0.01));
     setR(lr);
     if (ringRef.current) {
@@ -104,8 +105,7 @@ export default function AOC() {
             anchorX="center"
             anchorY="middle"
           >
-            Point of Impact = ({center[0]}, {-center[1]}, {vicHeight.toFixed(2)}
-            )
+            Point of Impact = ({center[0]}, {-center[1]}, {impact.toFixed(2)})
           </Text>
           <Text
             ref={centerRef}

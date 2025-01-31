@@ -17,4 +17,5 @@ export type BloodPropertiesType = {
   theta: number;
   AOI: number;
   edge: THREE.Line3;
+  height: number;
 };

@@ -14,23 +14,28 @@ export default function Crimescene() {
   const [trajectories, setTrajectories] = useState<any[]>([]);
   const [center, setCenter] = useState([0, 0]);
   const [vicHeight, setVicHeight] = useState(0);
+  const [impact, setImpact] = useState(0);
+  const [bloodHeight, setBloodHeight] = useState<number[]>([]);
 
   useEffect(() => {
+    let sumh = 0;
     let maxh = 0;
+    let tempBloodHeight: number[] = [];
     bloodProperties.map((prop) => {
       let { x, y, AOI } = prop;
       const di = Math.sqrt((x - center[0]) ** 2 + (y - center[1]) ** 2);
       const tan = Math.tan((AOI * Math.PI) / 180);
-      maxh = Math.max(
-        settings.motion == "Free fall"
-          ? (di * tan) / 2
-          : settings.motion == "Projectile"
-          ? (di ** 2 * tan) / (3 * di - 1)
-          : di * tan,
-        maxh
-      );
+      const temp =
+        settings.motion == "Straight"
+          ? di * tan
+          : (di ** 2 * tan) / (3 * di - 1);
+      sumh += temp;
+      maxh = Math.max(maxh, temp);
+      tempBloodHeight.push(temp);
     });
     setVicHeight(maxh);
+    setImpact(sumh / bloodProperties.length);
+    setBloodHeight(tempBloodHeight);
     setTrajectories(
       bloodProperties.map((prop) =>
         computeTrajectory(prop, center, settings.motion)
@@ -40,7 +45,14 @@ export default function Crimescene() {
 
   return (
     <CrimeSceneContext.Provider
-      value={{ trajectories, setTrajectories, center, setCenter, vicHeight }}
+      value={{
+        trajectories,
+        setTrajectories,
+        center,
+        setCenter,
+        vicHeight,
+        impact,
+      }}
     >
       <Canvas>
         <Scene />
@@ -73,6 +85,15 @@ export default function Crimescene() {
               <meshBasicMaterial color="red" />
             </mesh>
           ) : null
+        )}
+        {impact && (
+          <mesh
+            position={[center[0], impact, center[1]]}
+            rotation={[Math.PI / 2, 0, 0]}
+          >
+            <torusGeometry args={[settings.planeSize / 100, 0.025, 16, 32]} />
+            <meshBasicMaterial color="green" />
+          </mesh>
         )}
       </Canvas>
     </CrimeSceneContext.Provider>

@@ -38,11 +38,13 @@ export const CrimeSceneContext = createContext<{
   setTrajectories: Dispatch<SetStateAction<THREE.Vector3[][]>>;
   center: number[];
   setCenter: Dispatch<SetStateAction<number[]>>;
+  impact: number;
   vicHeight: number;
 }>({
   trajectories: [],
   setTrajectories: () => {},
   center: [0, 0],
   setCenter: () => {},
+  impact: 0,
   vicHeight: 0,
 });

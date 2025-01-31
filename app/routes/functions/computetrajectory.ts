@@ -18,12 +18,7 @@ export function computeTrajectory(
     const cx = center[0] + (x - center[0]) * t;
     const cz = center[1] + (y - center[1]) * t;
     const xt = di * t;
-    const h =
-      motion == "Free fall"
-        ? (di * tan) / 2
-        : motion == "Projectile"
-        ? (di ** 2 * tan) / (3 * di - 1)
-        : di * tan;
+    const h = motion == "Straight" ? di * tan : (di ** 2 * tan) / (3 * di - 1);
     const cy =
       motion == "Free fall"
         ? (-1 / (2 * di)) * tan * xt * xt + h

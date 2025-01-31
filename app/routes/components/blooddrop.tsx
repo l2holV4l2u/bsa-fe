@@ -89,6 +89,7 @@ export default function BloodDrop({
           <Input label="y" data={y} setData={setY} />
           <Input label="r" data={rotation} setData={setRotation} />
         </div>
+        <div></div>
         <div className="flex gap-2 p-2 items-center">
           <button onClick={() => handleDelete(index)}>
             <MdDeleteOutline size={24} color="red" />

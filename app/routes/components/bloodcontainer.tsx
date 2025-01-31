@@ -35,6 +35,7 @@ export default function BloodContainer() {
       new THREE.Vector3(x ?? 0, 0, y ?? 0),
       new THREE.Vector3(0, 0, 0)
     ),
+    height: 0,
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
