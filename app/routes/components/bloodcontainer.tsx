@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { AppContext } from "../functions/context";
 
 export default function BloodContainer() {
-  const { bloodProperties, settings, setFocusBlood, setBloodProperties } =
+  const { bloodProperties, setFocusBlood, setBloodProperties } =
     useContext(AppContext);
   const [isDelete, setIsDelete] = useState(false);
 
@@ -109,7 +109,6 @@ export default function BloodContainer() {
               bloodPropertie={bloodProperties[index]}
               index={index}
               isDelete={isDelete}
-              settings={settings}
               setIsDelete={setIsDelete}
               setBloodProperties={setBloodProperties}
               setFocusBlood={setFocusBlood}

@@ -1,17 +1,22 @@
 import { MdDeleteOutline } from "react-icons/md";
 import { BloodPropertiesType } from "../types/blood";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { FaPen } from "react-icons/fa";
 import Input from "./input";
 import { computeEdge } from "../functions/computeedge";
-import { SettingsType } from "../types/settings";
+import { AppContext } from "../functions/context";
 
 export default function BloodDrop({
   file,
   bloodPropertie,
   index,
   isDelete,
-  settings,
   setIsDelete,
   setBloodProperties,
   setFocusBlood,
@@ -20,11 +25,11 @@ export default function BloodDrop({
   bloodPropertie: BloodPropertiesType;
   index: number;
   isDelete: boolean;
-  settings: SettingsType;
   setIsDelete: Dispatch<SetStateAction<boolean>>;
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
   setFocusBlood: Dispatch<SetStateAction<number>>;
 }) {
+  const { settings } = useContext(AppContext);
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
   const [rotation, setRotation] = useState(String(bloodPropertie.userrot || 0));
@@ -53,7 +58,7 @@ export default function BloodDrop({
         return updatedProperties;
       });
     }
-  }, [x, y, rotation]);
+  }, [x, y, rotation, settings]);
 
   useEffect(() => {
     if (isDelete) {

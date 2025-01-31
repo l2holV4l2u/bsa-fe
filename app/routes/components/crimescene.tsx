@@ -13,18 +13,34 @@ export default function Crimescene() {
   const { bloodProperties, settings } = useContext(AppContext);
   const [trajectories, setTrajectories] = useState<any[]>([]);
   const [center, setCenter] = useState([0, 0]);
+  const [vicHeight, setVicHeight] = useState(0);
 
   useEffect(() => {
+    let maxh = 0;
+    bloodProperties.map((prop) => {
+      let { x, y, AOI } = prop;
+      const di = Math.sqrt((x - center[0]) ** 2 + (y - center[1]) ** 2);
+      const tan = Math.tan((AOI * Math.PI) / 180);
+      maxh = Math.max(
+        settings.motion == "Free fall"
+          ? (di * tan) / 2
+          : settings.motion == "Projectile"
+          ? (di ** 2 * tan) / (3 * di - 1)
+          : di * tan,
+        maxh
+      );
+    });
+    setVicHeight(maxh);
     setTrajectories(
       bloodProperties.map((prop) =>
-        computeTrajectory(prop, settings.height, center, settings.motion)
+        computeTrajectory(prop, center, settings.motion)
       )
     );
-  }, [bloodProperties, center, settings]);
+  }, [bloodProperties, center, settings, vicHeight]);
 
   return (
     <CrimeSceneContext.Provider
-      value={{ trajectories, setTrajectories, center, setCenter }}
+      value={{ trajectories, setTrajectories, center, setCenter, vicHeight }}
     >
       <Canvas>
         <Scene />
@@ -34,9 +50,16 @@ export default function Crimescene() {
         {settings.showSP && <BloodStraight />}
         {settings.showAOC && <AOC />}
         {bloodProperties.length != 0 && (
-          <mesh position={[center[0], settings.height / 2, center[1]]}>
-            <cylinderGeometry args={[0.1, 0.1, settings.height, 16]} />
-            <meshBasicMaterial color="white" opacity={0.8} transparent />
+          <mesh position={[center[0], vicHeight / 2, center[1]]}>
+            <cylinderGeometry
+              args={[
+                settings.planeSize / 100,
+                settings.planeSize / 100,
+                vicHeight,
+                16,
+              ]}
+            />
+            <meshBasicMaterial color="white" opacity={1} transparent />
           </mesh>
         )}
         {trajectories.map((points, index) =>
@@ -46,7 +69,7 @@ export default function Crimescene() {
               position={[center[0], points[0].y, center[1]]}
               rotation={[Math.PI / 2, 0, 0]}
             >
-              <torusGeometry args={[0.1, 0.02, 16, 32]} />
+              <torusGeometry args={[settings.planeSize / 100, 0.025, 16, 32]} />
               <meshBasicMaterial color="red" />
             </mesh>
           ) : null

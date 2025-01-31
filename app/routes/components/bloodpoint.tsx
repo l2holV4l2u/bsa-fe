@@ -31,17 +31,17 @@ export default function BloodPoint() {
         return (
           <group key={index}>
             <mesh ref={(el) => (dotRefs.current[index] = el)}>
-              <sphereGeometry args={[0.075, 12, 12]} />
+              <sphereGeometry args={[0.004 * settings.planeSize, 12, 12]} />
               <meshBasicMaterial color="red" />
             </mesh>
             <Text
               ref={(el) => (textRefs.current[index] = el)}
               position={[
                 prop.edge.start.x,
-                prop.edge.start.y - 0.2,
+                prop.edge.start.y - 0.015 * settings.planeSize,
                 prop.edge.start.z,
               ]}
-              fontSize={0.15}
+              fontSize={0.01 * settings.planeSize}
               color="white"
               anchorX="center"
               anchorY="middle"

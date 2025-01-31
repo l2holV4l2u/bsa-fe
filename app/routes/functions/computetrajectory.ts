@@ -3,7 +3,6 @@ import { BloodPropertiesType } from "../types/blood";
 
 export function computeTrajectory(
   prop: BloodPropertiesType,
-  h: number,
   center: number[],
   motion: string
 ) {
@@ -14,15 +13,20 @@ export function computeTrajectory(
     return [];
   }
   const tan = Math.tan((AOI * Math.PI) / 180);
-  const ch = (di * tan) / 2;
   for (let i = 0; i <= 100; i++) {
     const t = i / 100;
     const cx = center[0] + (x - center[0]) * t;
     const cz = center[1] + (y - center[1]) * t;
     const xt = di * t;
+    const h =
+      motion == "Free fall"
+        ? (di * tan) / 2
+        : motion == "Projectile"
+        ? (di ** 2 * tan) / (3 * di - 1)
+        : di * tan;
     const cy =
       motion == "Free fall"
-        ? (-1 / (2 * di)) * tan * xt * xt + ch
+        ? (-1 / (2 * di)) * tan * xt * xt + h
         : motion == "Straight"
         ? -(h / di) * xt + h
         : ((h - di * tan) / (di * di)) * xt * xt +

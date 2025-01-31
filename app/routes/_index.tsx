@@ -5,7 +5,7 @@ import Crimescene from "./components/crimescene";
 import TimeSlider from "./components/timeslider";
 import { AppContext } from "./functions/context";
 import Settings from "./components/settings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Index() {
   const [settings, setSettings] = useState({

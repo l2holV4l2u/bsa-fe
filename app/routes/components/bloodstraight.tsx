@@ -4,7 +4,7 @@ import { AppContext } from "../functions/context";
 
 export default function BloodStraight() {
   const { bloodProperties, settings } = useContext(AppContext);
-  const lineRefs = useRef<(THREE.Line | undefined)[]>([]);
+  const lineRefs = useRef<(THREE.Mesh | undefined)[]>([]);
   const angleRefs = useRef<(THREE.ArrowHelper | undefined)[]>([]);
   const directionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
   const rotatedDirectionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
@@ -16,42 +16,44 @@ export default function BloodStraight() {
       directionRefs.current[index] = new THREE.Vector3()
         .subVectors(edge.end, edge.start)
         .normalize();
-      if (lineRefs.current[index]) {
-        lineRefs.current[index]!.geometry =
-          new THREE.BufferGeometry().setFromPoints([edge.start, edge.end]);
-      }
       const rotationAxis = directionRefs.current[index]!.clone()
         .cross(new THREE.Vector3(0, 1, 0))
         .normalize();
       rotatedDirectionRefs.current[index] = new THREE.Vector3()
         .copy(directionRefs.current[index]!)
         .applyAxisAngle(rotationAxis, (angle * Math.PI) / 180);
-      if (angleRefs.current[index]) {
-        angleRefs.current[index]!.setDirection(
-          rotatedDirectionRefs.current[index]!
-        );
-      }
     });
-  }, [bloodProperties, settings.planeSize]);
+  }, [bloodProperties, settings]);
 
   return (
     <>
       {bloodProperties.map((prop, index) => {
         const edge = prop.edge;
+        const lineThickness = 0.001 * settings.planeSize;
+        const geometry = new THREE.TubeGeometry(
+          new THREE.LineCurve3(edge.start, edge.end),
+          20,
+          lineThickness,
+          8,
+          false
+        );
+        const arrowSize = lineThickness * 8;
         return (
           <group key={index}>
-            <line ref={(el) => (lineRefs.current[index] = el)}>
-              <lineBasicMaterial color="red" />
-              <bufferGeometry />
-            </line>
+            <mesh
+              ref={(el) => (lineRefs.current[index] = el)}
+              geometry={geometry}
+            >
+              <meshBasicMaterial color="red" />
+            </mesh>
             <arrowHelper
               args={[
                 directionRefs.current[index],
                 edge.end,
-                0.01,
+                0.05,
                 "red",
-                0.1,
-                0.1,
+                arrowSize,
+                arrowSize,
               ]}
             />
             <arrowHelper
@@ -59,10 +61,10 @@ export default function BloodStraight() {
               args={[
                 rotatedDirectionRefs.current[index],
                 edge.start,
-                0.5,
+                1,
                 0xe1e97b,
-                0.1,
-                0.1,
+                arrowSize / 2,
+                arrowSize / 2,
               ]}
             />
           </group>

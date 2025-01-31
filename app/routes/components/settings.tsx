@@ -4,13 +4,13 @@ import Selector from "./selector";
 import Tickbox from "./tickbox";
 
 export default function Settings() {
-  const { settings, setSettings } = useContext(AppContext);
+  const { settings, setSettings, bloodProperties } = useContext(AppContext);
   const [showTrajectory, setShowTrajectory] = useState(settings.showTrajectory);
   const [showSP, setShowSP] = useState(settings.showSP);
   const [showAOC, setShowAOC] = useState(settings.showAOC);
   const [motion, setMotion] = useState(settings.motion);
   const [material, setMaterial] = useState(settings.material);
-  const [planeSize, setPlaneSize] = useState("30");
+  const [planeSize, setPlaneSize] = useState("25");
   const [height, setHeight] = useState("1.8");
 
   useEffect(() => {
@@ -24,6 +24,14 @@ export default function Settings() {
       height: Number(height),
     });
   }, [showTrajectory, showSP, showAOC, motion, material, planeSize, height]);
+
+  useEffect(() => {
+    let maxSize = 20;
+    bloodProperties.forEach((prop) => {
+      maxSize = Math.max(maxSize, prop.x, -prop.y);
+    });
+    setPlaneSize(String(Math.ceil(maxSize / 10) * 10));
+  }, [bloodProperties]);
 
   return (
     <div className="w-full flex rounded-lg justify-between items-center border-2 border-border p-4">

@@ -39,8 +39,8 @@ export default function Axis() {
         )}
       />
       <Text
-        position={[settings.planeSize + 0.5, 0, 0]}
-        fontSize={1}
+        position={[settings.planeSize * 1.02, 0, 0]}
+        fontSize={settings.planeSize / 25}
         color="white"
         anchorX="center"
         anchorY="middle"
@@ -48,8 +48,8 @@ export default function Axis() {
         X
       </Text>
       <Text
-        position={[0, 0, -settings.planeSize - 0.5]}
-        fontSize={1}
+        position={[0, 0, -settings.planeSize * 1.02]}
+        fontSize={settings.planeSize / 25}
         color="white"
         anchorX="center"
         anchorY="middle"
@@ -57,8 +57,8 @@ export default function Axis() {
         Y
       </Text>
       <Text
-        position={[0, settings.planeSize + 0.5, 0]}
-        fontSize={1}
+        position={[0, settings.planeSize * 1.02, 0]}
+        fontSize={settings.planeSize / 25}
         color="white"
         anchorX="center"
         anchorY="middle"

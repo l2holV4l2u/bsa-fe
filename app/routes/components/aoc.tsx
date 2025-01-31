@@ -6,11 +6,13 @@ import { AppContext, CrimeSceneContext } from "../functions/context";
 
 export default function AOC() {
   const { bloodProperties, settings } = useContext(AppContext);
-  const { center, setCenter } = useContext(CrimeSceneContext);
+  const { center, setCenter, vicHeight } = useContext(CrimeSceneContext);
   const planeSize = settings.planeSize;
   const textRef = useRef<THREE.Mesh>(null);
+  const centerRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const [r, setR] = useState(0);
+  const [innerRadius, setInnerRadius] = useState(0);
 
   const checkCollisions = ({
     circleSphere,
@@ -62,42 +64,60 @@ export default function AOC() {
       }
     }
     setCenter([resX, resY]);
+    const safeR = Math.max(r, 0.25);
+    setInnerRadius(Math.max(1 - 1 / (2.5 * safeR), 0.01));
     setR(lr);
     if (ringRef.current) {
       ringRef.current.position.set(resX, 0, resY);
       ringRef.current.scale.set(resR, resR, 1);
       ringRef.current.rotation.x = Math.PI / 2;
     }
-  }, [bloodProperties]);
+  }, [bloodProperties, settings]);
 
   useFrame(({ camera }) => {
     if (textRef.current) {
       textRef.current.lookAt(camera.position);
+    }
+    if (centerRef.current) {
+      centerRef.current.lookAt(camera.position);
     }
   });
 
   return (
     <>
       <mesh ref={ringRef}>
-        <ringGeometry args={[0.8, 1, 64]} />
+        <ringGeometry args={[innerRadius, 1, 64]} />
         <meshBasicMaterial
-          color="red"
-          opacity={0.75}
+          color="white"
+          opacity={0.9}
           transparent
           side={THREE.DoubleSide}
         />
       </mesh>
       {bloodProperties.length != 0 && r >= 0.25 && (
-        <Text
-          ref={textRef}
-          position={[center[0], -0.3, center[1]]}
-          fontSize={0.25}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-        >
-          (h,k) = ({center[0]}, {-center[1]}), r = {r.toFixed(2)}
-        </Text>
+        <>
+          <Text
+            ref={textRef}
+            position={[center[0], vicHeight + 2, center[1]]}
+            fontSize={0.015 * settings.planeSize}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Point of Impact = ({center[0]}, {-center[1]}, {vicHeight.toFixed(2)}
+            )
+          </Text>
+          <Text
+            ref={centerRef}
+            position={[center[0], vicHeight + 1, center[1]]}
+            fontSize={0.015 * settings.planeSize}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            (h,k) = ({center[0]}, {-center[1]}), r = {r.toFixed(2)}
+          </Text>
+        </>
       )}
     </>
   );
