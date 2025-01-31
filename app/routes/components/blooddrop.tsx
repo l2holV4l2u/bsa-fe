@@ -33,6 +33,7 @@ export default function BloodDrop({
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
   const [rotation, setRotation] = useState(String(bloodPropertie.userrot || 0));
+  const [bh, setBh] = useState("0");
 
   useEffect(() => {
     if (!isDelete) {
@@ -77,6 +78,14 @@ export default function BloodDrop({
     });
   }
 
+  useEffect(() => {
+    if (bloodHeight.length) {
+      if (bloodHeight[index] != undefined) {
+        setBh(bloodHeight[index].toFixed(2));
+      }
+    }
+  }, [bloodHeight]);
+
   return (
     <div className="grid grid-cols-3 gap-2 w-full items-center">
       <img
@@ -90,11 +99,7 @@ export default function BloodDrop({
             <Input label="y" data={y} setData={setY} />
             <Input label="r" data={rotation} setData={setRotation} />
           </div>
-          {bloodHeight[index] != undefined && (
-            <div className="text-sm col-span-1 py-2">
-              height: {bloodHeight[index].toFixed(2)}
-            </div>
-          )}
+          <div className="text-sm col-span-1 py-2">height: {bh}</div>
         </div>
         <div className="flex gap-2 p-2 items-center">
           <button onClick={() => handleDelete(index)}>
