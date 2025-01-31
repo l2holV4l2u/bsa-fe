@@ -1,27 +1,32 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import * as THREE from "three";
+import { AppContext, CrimeSceneContext } from "../functions/context";
 
-export default function BloodProjectile({
-  time,
-  points,
-}: {
-  time: number;
-  points: THREE.Vector3[];
-}) {
-  const lineRef = useRef<THREE.Line>(null);
+export default function BloodProjectile() {
+  const { trajectories } = useContext(CrimeSceneContext);
+  const { time } = useContext(AppContext);
+  const lineRefs = useRef<(THREE.Line | null)[]>([]);
 
   useEffect(() => {
-    if (lineRef.current) {
-      const index = Math.min(Math.floor(time), points.length - 1);
-      const visiblePoints = points.slice(0, index + 1);
-      const geometry = new THREE.BufferGeometry().setFromPoints(visiblePoints);
-      lineRef.current.geometry = geometry;
-    }
-  }, [time, points]);
+    trajectories.forEach((points, index) => {
+      if (lineRefs.current[index]) {
+        const trajIndex = Math.min(Math.floor(time), points.length - 1);
+        const visiblePoints = points.slice(0, trajIndex + 1);
+        const geometry = new THREE.BufferGeometry().setFromPoints(
+          visiblePoints
+        );
+        lineRefs.current[index]!.geometry = geometry;
+      }
+    });
+  }, [time, trajectories]);
 
   return (
-    <line ref={lineRef}>
-      <lineBasicMaterial color="#d68dd2" linewidth={0.5} />
-    </line>
+    <>
+      {trajectories.map((_, index) => (
+        <line key={index} ref={(el) => (lineRefs.current[index] = el)}>
+          <lineBasicMaterial color="#d68dd2" linewidth={0.5} />
+        </line>
+      ))}
+    </>
   );
 }

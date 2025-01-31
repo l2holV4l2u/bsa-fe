@@ -1,60 +1,73 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import * as THREE from "three";
+import { AppContext } from "../functions/context";
 
-export default function BloodStraight({
-  planeSize,
-  edge,
-  angle,
-}: {
-  planeSize: number;
-  edge: THREE.Line3;
-  angle: number;
-}) {
-  const lineRef = useRef<THREE.Line>(null);
-  const angleRef = useRef<THREE.ArrowHelper>(null);
-  const directionRef = useRef(new THREE.Vector3());
-  const rotatedDirectionRef = useRef(new THREE.Vector3());
+export default function BloodStraight() {
+  const { bloodProperties, settings } = useContext(AppContext);
+  const lineRefs = useRef<(THREE.Line | undefined)[]>([]);
+  const angleRefs = useRef<(THREE.ArrowHelper | undefined)[]>([]);
+  const directionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
+  const rotatedDirectionRefs = useRef<(THREE.Vector3 | undefined)[]>([]);
 
   useEffect(() => {
-    directionRef.current.subVectors(edge.end, edge.start).normalize();
-    if (lineRef.current) {
-      lineRef.current.geometry = new THREE.BufferGeometry().setFromPoints([
-        edge.start,
-        edge.end,
-      ]);
-    }
-    const rotationAxis = directionRef.current
-      .clone()
-      .cross(new THREE.Vector3(0, 1, 0))
-      .normalize();
-    rotatedDirectionRef.current
-      .copy(directionRef.current)
-      .applyAxisAngle(rotationAxis, (angle * Math.PI) / 180);
-    if (angleRef.current) {
-      angleRef.current.setDirection(rotatedDirectionRef.current);
-    }
-  }, [edge, planeSize, angle]);
+    bloodProperties.forEach((prop, index) => {
+      const edge = prop.edge;
+      const angle = prop.AOI;
+      directionRefs.current[index] = new THREE.Vector3()
+        .subVectors(edge.end, edge.start)
+        .normalize();
+      if (lineRefs.current[index]) {
+        lineRefs.current[index]!.geometry =
+          new THREE.BufferGeometry().setFromPoints([edge.start, edge.end]);
+      }
+      const rotationAxis = directionRefs.current[index]!.clone()
+        .cross(new THREE.Vector3(0, 1, 0))
+        .normalize();
+      rotatedDirectionRefs.current[index] = new THREE.Vector3()
+        .copy(directionRefs.current[index]!)
+        .applyAxisAngle(rotationAxis, (angle * Math.PI) / 180);
+      if (angleRefs.current[index]) {
+        angleRefs.current[index]!.setDirection(
+          rotatedDirectionRefs.current[index]!
+        );
+      }
+    });
+  }, [bloodProperties, settings.planeSize]);
 
   return (
     <>
-      <line ref={lineRef}>
-        <lineBasicMaterial color="red" />
-        <bufferGeometry />
-      </line>
-      <arrowHelper
-        args={[directionRef.current, edge.end, 0.01, "red", 0.1, 0.1]}
-      />
-      <arrowHelper
-        ref={angleRef}
-        args={[
-          rotatedDirectionRef.current,
-          edge.start,
-          0.5,
-          0xe1e97b,
-          0.1,
-          0.1,
-        ]}
-      />
+      {bloodProperties.map((prop, index) => {
+        const edge = prop.edge;
+        return (
+          <group key={index}>
+            <line ref={(el) => (lineRefs.current[index] = el)}>
+              <lineBasicMaterial color="red" />
+              <bufferGeometry />
+            </line>
+            <arrowHelper
+              args={[
+                directionRefs.current[index],
+                edge.end,
+                0.01,
+                "red",
+                0.1,
+                0.1,
+              ]}
+            />
+            <arrowHelper
+              ref={(el) => (angleRefs.current[index] = el)}
+              args={[
+                rotatedDirectionRefs.current[index],
+                edge.start,
+                0.5,
+                0xe1e97b,
+                0.1,
+                0.1,
+              ]}
+            />
+          </group>
+        );
+      })}
     </>
   );
 }

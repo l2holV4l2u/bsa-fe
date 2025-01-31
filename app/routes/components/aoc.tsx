@@ -1,20 +1,13 @@
-import * as THREE from "three";
-import { useRef, useEffect, Dispatch, SetStateAction, useState } from "react";
-import { BloodPropertiesType } from "../types/blood";
+import { useRef, useEffect, useState, useContext } from "react";
 import { Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { AppContext, CrimeSceneContext } from "../functions/context";
 
-export default function AOC({
-  bloodProperties,
-  planeSize,
-  center,
-  setCenter,
-}: {
-  bloodProperties: BloodPropertiesType[];
-  planeSize: number;
-  center: number[];
-  setCenter: Dispatch<SetStateAction<number[]>>;
-}) {
+export default function AOC() {
+  const { bloodProperties, settings } = useContext(AppContext);
+  const { center, setCenter } = useContext(CrimeSceneContext);
+  const planeSize = settings.planeSize;
   const textRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const [r, setR] = useState(0);
@@ -75,7 +68,6 @@ export default function AOC({
       ringRef.current.scale.set(resR, resR, 1);
       ringRef.current.rotation.x = Math.PI / 2;
     }
-    console.log(resX, resY);
   }, [bloodProperties]);
 
   useFrame(({ camera }) => {

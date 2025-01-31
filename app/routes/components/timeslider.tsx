@@ -1,17 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaBackward, FaForward, FaPause, FaPlay } from "react-icons/fa";
+import { AppContext } from "../functions/context";
 
-export default function TimeSlider({
-  time,
-  setTime,
-}: {
-  time: number;
-  setTime: React.Dispatch<number>;
-}) {
+export default function TimeSlider() {
+  const { time, setTime } = useContext(AppContext);
   const animationRef = useRef<number>();
   const lastUpdateTime = useRef<number>(0);
-  const isAnimating = useRef<boolean>(false); // Track if the animation is running
-  const [isPlaying, setIsPlaying] = useState(true); // Control play/stop state
+  const isAnimating = useRef<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
     const animate = (currentTime: number) => {
@@ -46,7 +42,7 @@ export default function TimeSlider({
   };
 
   const handlePlayStop = () => {
-    setIsPlaying((prev) => !prev); // Toggle play/stop
+    setIsPlaying((prev) => !prev);
   };
 
   return (

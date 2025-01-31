@@ -1,8 +1,10 @@
 import * as THREE from "three";
-import { SettingsType } from "../types/settings";
 import { Text } from "@react-three/drei";
+import { useContext } from "react";
+import { AppContext } from "../functions/context";
 
-export default function Axis({ settings }: { settings: SettingsType }) {
+export default function Axis() {
+  const { settings } = useContext(AppContext);
   const createAxisLine = (
     start: THREE.Vector3,
     end: THREE.Vector3,

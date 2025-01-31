@@ -1,21 +1,16 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "../functions/context";
 import Selector from "./selector";
 import Tickbox from "./tickbox";
-import { SettingsType } from "../types/settings";
 
-export default function Settings({
-  settings,
-  setSettings,
-}: {
-  settings: SettingsType;
-  setSettings: Dispatch<SetStateAction<SettingsType>>;
-}) {
+export default function Settings() {
+  const { settings, setSettings } = useContext(AppContext);
   const [showTrajectory, setShowTrajectory] = useState(settings.showTrajectory);
   const [showSP, setShowSP] = useState(settings.showSP);
   const [showAOC, setShowAOC] = useState(settings.showAOC);
   const [motion, setMotion] = useState(settings.motion);
   const [material, setMaterial] = useState(settings.material);
-  const [planeSize, setPlaneSize] = useState("20");
+  const [planeSize, setPlaneSize] = useState("30");
   const [height, setHeight] = useState("1.8");
 
   useEffect(() => {

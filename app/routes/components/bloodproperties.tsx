@@ -1,25 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { m6x6 } from "../functions/matrix";
 import { atan2, cos, sin, sqrt, max, min, atan } from "mathjs";
 import { BloodPropertiesType } from "../types/blood";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { AppContext } from "../functions/context";
 
 type Point = [number, number];
 const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
 
 export default function BloodProperties({
   bloodPropertie,
-  material,
-  focusBlood,
   setBloodPropertie,
-  setFocusBlood,
 }: {
   bloodPropertie: BloodPropertiesType;
-  material: string;
-  focusBlood: number;
   setBloodPropertie: (val: BloodPropertiesType) => void;
-  setFocusBlood: React.Dispatch<number>;
 }) {
+  const { settings, focusBlood, setFocusBlood } = useContext(AppContext);
   const [points, setPoints] = useState<Point[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -78,7 +74,7 @@ export default function BloodProperties({
       atan(sqrt(semiminor ** 2 / (semimajor ** 2 - semiminor ** 2)))
     );
     let AOI = impactAngle;
-    switch (material) {
+    switch (settings.material) {
       case "Paper": {
         AOI = -2.673 + 1.068 * impactAngle;
         break;
@@ -119,7 +115,7 @@ export default function BloodProperties({
       edge: bloodPropertie.edge,
     };
     setBloodPropertie(updatedPropertie);
-  }, [points, material]);
+  }, [points, settings.material]);
 
   return (
     <div className="flex flex-col items-start justify-start w-full h-full p-4 gap-2">
@@ -159,7 +155,7 @@ export default function BloodProperties({
             {bloodPropertie.semimajor}
           </div>
           <div>
-            AOI ({material}): {bloodPropertie.AOI}°
+            AOI ({settings.material}): {bloodPropertie.AOI}°
           </div>
         </div>
       )}

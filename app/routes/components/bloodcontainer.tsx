@@ -1,21 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import BloodDrop from "./blooddrop";
 import { HiOutlinePlus } from "react-icons/hi";
-import { BloodPropertiesType } from "../types/blood";
 import * as THREE from "three";
-import { SettingsType } from "../types/settings";
+import { AppContext } from "../functions/context";
 
-export default function BloodContainer({
-  bloodProperties,
-  settings,
-  setFocusBlood,
-  setBloodProperties,
-}: {
-  bloodProperties: BloodPropertiesType[];
-  settings: SettingsType;
-  setFocusBlood: Dispatch<SetStateAction<number>>;
-  setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
-}) {
+export default function BloodContainer() {
+  const { bloodProperties, settings, setFocusBlood, setBloodProperties } =
+    useContext(AppContext);
   const [isDelete, setIsDelete] = useState(false);
 
   const defaultBlood = (

@@ -1,7 +1,10 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { SettingsType } from "../types/settings";
+import { useContext } from "react";
+import { AppContext } from "../functions/context";
 
-export default function Scene({ settings }: { settings: SettingsType }) {
+export default function Scene() {
+  const { settings } = useContext(AppContext);
+
   return (
     <>
       <PerspectiveCamera
@@ -20,18 +23,18 @@ export default function Scene({ settings }: { settings: SettingsType }) {
       <directionalLight position={[3, 3, -3]} />
       {/* Floor */}
       <gridHelper
-        args={[settings.planeSize, settings.planeSize]}
+        args={[settings.planeSize, 10]}
         position={[settings.planeSize / 2, 0, -settings.planeSize / 2]}
       />
       {/* Back Wall */}
       <gridHelper
-        args={[settings.planeSize, settings.planeSize]}
+        args={[settings.planeSize, 10]}
         rotation={[Math.PI / 2, 0, 0]}
         position={[settings.planeSize / 2, settings.planeSize / 2, 0]}
       />
       {/* Right Wall */}
       <gridHelper
-        args={[settings.planeSize, settings.planeSize]}
+        args={[settings.planeSize, 10]}
         rotation={[0, 0, Math.PI / 2]}
         position={[0, settings.planeSize / 2, -settings.planeSize / 2]}
       />
