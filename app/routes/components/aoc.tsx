@@ -75,6 +75,7 @@ export default function AOC({
       ringRef.current.scale.set(resR, resR, 1);
       ringRef.current.rotation.x = Math.PI / 2;
     }
+    console.log(resX, resY);
   }, [bloodProperties]);
 
   useFrame(({ camera }) => {

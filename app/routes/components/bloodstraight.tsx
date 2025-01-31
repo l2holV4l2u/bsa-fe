@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export default function BloodStraight({
@@ -11,23 +11,29 @@ export default function BloodStraight({
   angle: number;
 }) {
   const lineRef = useRef<THREE.Line>(null);
-  const dotRef = useRef<THREE.Mesh>(null);
   const angleRef = useRef<THREE.ArrowHelper>(null);
-  const [direction, setDirection] = useState(new THREE.Vector3(0, 0, 0));
+  const directionRef = useRef(new THREE.Vector3());
+  const rotatedDirectionRef = useRef(new THREE.Vector3());
+
   useEffect(() => {
-    setDirection(
-      new THREE.Vector3().subVectors(edge.end, edge.start).normalize()
-    );
+    directionRef.current.subVectors(edge.end, edge.start).normalize();
     if (lineRef.current) {
       lineRef.current.geometry = new THREE.BufferGeometry().setFromPoints([
         edge.start,
         edge.end,
       ]);
     }
-    if (dotRef.current) {
-      dotRef.current.position.set(edge.start.x, edge.start.y, edge.start.z);
+    const rotationAxis = directionRef.current
+      .clone()
+      .cross(new THREE.Vector3(0, 1, 0))
+      .normalize();
+    rotatedDirectionRef.current
+      .copy(directionRef.current)
+      .applyAxisAngle(rotationAxis, (angle * Math.PI) / 180);
+    if (angleRef.current) {
+      angleRef.current.setDirection(rotatedDirectionRef.current);
     }
-  }, [edge, planeSize]);
+  }, [edge, planeSize, angle]);
 
   return (
     <>
@@ -35,11 +41,20 @@ export default function BloodStraight({
         <lineBasicMaterial color="red" />
         <bufferGeometry />
       </line>
-      <mesh ref={dotRef}>
-        <sphereGeometry args={[0.075, 12, 12]} />
-        <meshBasicMaterial color="red" />
-      </mesh>
-      <arrowHelper args={[direction, edge.end, 0.01, 0xe1e97b, 0.2, 0.2]} />
+      <arrowHelper
+        args={[directionRef.current, edge.end, 0.01, "red", 0.1, 0.1]}
+      />
+      <arrowHelper
+        ref={angleRef}
+        args={[
+          rotatedDirectionRef.current,
+          edge.start,
+          0.5,
+          0xe1e97b,
+          0.1,
+          0.1,
+        ]}
+      />
     </>
   );
 }

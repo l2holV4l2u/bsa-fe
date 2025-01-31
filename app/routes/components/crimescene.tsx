@@ -8,6 +8,7 @@ import BloodStraight from "./bloodstraight";
 import AOC from "./aoc";
 import Axis from "./axis";
 import Scene from "./scene";
+import BloodPoint from "./bloodpoint";
 
 export default function Crimescene({
   time,
@@ -22,7 +23,6 @@ export default function Crimescene({
   const [center, setCenter] = useState([0, 0]);
 
   useEffect(() => {
-    console.log(bloodProperties);
     const newTrajectories = bloodProperties.map((prop) =>
       computeTrajectory(prop, settings.height, center, settings.motion)
     );
@@ -37,6 +37,19 @@ export default function Crimescene({
         trajectories.map((points, index) => (
           <BloodProjectile key={index} time={time} points={points} />
         ))}
+      {bloodProperties.map(
+        (prop, index) =>
+          prop.x &&
+          prop.y &&
+          prop.userrot && (
+            <BloodPoint
+              planeSize={settings.planeSize}
+              edge={prop.edge}
+              angle={prop.AOI}
+              index={index}
+            />
+          )
+      )}
       {settings.showSP &&
         bloodProperties.map(
           (prop) =>
@@ -58,10 +71,12 @@ export default function Crimescene({
           setCenter={setCenter}
         />
       )}
-      <mesh position={[center[0], settings.height / 2, center[1]]}>
-        <cylinderGeometry args={[0.1, 0.1, settings.height, 16]} />
-        <meshBasicMaterial color="white" opacity={0.8} transparent />
-      </mesh>
+      {bloodProperties.length != 0 && (
+        <mesh position={[center[0], settings.height / 2, center[1]]}>
+          <cylinderGeometry args={[0.1, 0.1, settings.height, 16]} />
+          <meshBasicMaterial color="white" opacity={0.8} transparent />
+        </mesh>
+      )}
       {trajectories.map((points, index) =>
         points.length > 0 ? (
           <mesh

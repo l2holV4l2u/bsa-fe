@@ -5,10 +5,6 @@ import { BloodPropertiesType } from "../types/blood";
 import * as THREE from "three";
 import { SettingsType } from "../types/settings";
 
-function getRandomInRange(min: number, max: number): number {
-  return Number((Math.random() * (max - min) + min).toFixed(2));
-}
-
 export default function BloodContainer({
   bloodProperties,
   settings,
@@ -21,12 +17,13 @@ export default function BloodContainer({
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
 }) {
   const [isDelete, setIsDelete] = useState(false);
+
   const defaultBlood = (
     uploadedFile: File,
-    angle: number,
-    x: number,
-    y: number,
-    userrot: number
+    angle: number = 0,
+    x: number = 0,
+    y: number = 0,
+    userrot: number = 0
   ) => ({
     x,
     y,
@@ -44,7 +41,7 @@ export default function BloodContainer({
     theta: angle,
     AOI: angle,
     edge: new THREE.Line3(
-      new THREE.Vector3(x, 0, y),
+      new THREE.Vector3(x ?? 0, 0, y ?? 0),
       new THREE.Vector3(0, 0, 0)
     ),
   });
@@ -52,17 +49,14 @@ export default function BloodContainer({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (uploadedFile) {
-      setBloodProperties([
-        ...bloodProperties,
-        defaultBlood(uploadedFile, 0, 0, 0, 0),
-      ]);
+      setBloodProperties([...bloodProperties, defaultBlood(uploadedFile)]);
     }
   };
 
   const handleAutofill = async () => {
     const sampleFilePaths = Array.from(
       { length: 10 },
-      (_, i) => `/bloodsamples/blood${i + 1}.png`
+      (_, i) => `/blood/blood${i + 1}.png`
     );
     const newFiles = await Promise.all(
       sampleFilePaths.map(async (filePath) => {
@@ -71,20 +65,20 @@ export default function BloodContainer({
         const fileName = filePath.split("/").pop() || "unknown.png";
         return new File([blob], fileName, {
           type: blob.type,
-          lastModified: Date.now(),
         });
       })
     );
-    const validFiles = newFiles.filter((file) => file !== null);
+    const data = await fetch("/samples.json").then((res) => res.json());
+    const clipped = newFiles.slice(0, data.length);
     setBloodProperties([
       ...bloodProperties,
-      ...validFiles.map((validFile) =>
+      ...clipped.map((file, index) =>
         defaultBlood(
-          validFile,
+          file,
           30,
-          getRandomInRange(5, 15),
-          getRandomInRange(5, 15),
-          getRandomInRange(0, 45)
+          data[index].x / 10,
+          data[index].y / 10,
+          data[index].r
         )
       ),
     ]);
