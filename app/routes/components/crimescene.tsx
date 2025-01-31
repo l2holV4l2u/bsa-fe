@@ -10,12 +10,11 @@ import Axis from "./axis";
 import Scene from "./scene";
 
 export default function Crimescene() {
-  const { bloodProperties, settings } = useContext(AppContext);
+  const { bloodProperties, settings, setBloodHeight } = useContext(AppContext);
   const [trajectories, setTrajectories] = useState<any[]>([]);
   const [center, setCenter] = useState([0, 0]);
   const [vicHeight, setVicHeight] = useState(0);
   const [impact, setImpact] = useState(0);
-  const [bloodHeight, setBloodHeight] = useState<number[]>([]);
 
   useEffect(() => {
     let sumh = 0;

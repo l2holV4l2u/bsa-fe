@@ -18,6 +18,7 @@ export default function Index() {
   });
   const [time, setTime] = useState(0);
   const [focusBlood, setFocusBlood] = useState<number>(-1);
+  const [bloodHeight, setBloodHeight] = useState<number[]>([]);
   const [bloodProperties, setBloodProperties] = useState<BloodPropertiesType[]>(
     []
   );
@@ -33,10 +34,12 @@ export default function Index() {
         setFocusBlood,
         bloodProperties,
         setBloodProperties,
+        bloodHeight,
+        setBloodHeight,
       }}
     >
       <div className="w-full max-h-screen h-screen flex flex-col items-center justify-center p-6">
-        <div className="w-[95%] h-full gap-4 flex flex-col items-center justify-center">
+        <div className="w-full h-full gap-4 flex flex-col items-center justify-center">
           <Settings />
           <div className="w-full h-[64vh] grid grid-cols-10 gap-6">
             <div className="col-span-3 h-full overflow-y-auto">

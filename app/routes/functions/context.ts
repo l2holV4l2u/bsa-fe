@@ -10,7 +10,6 @@ const defaultSettings: SettingsType = {
   motion: "Projectile",
   material: "Paper",
   planeSize: 20,
-  height: 1.8,
 };
 
 export const AppContext = createContext<{
@@ -22,6 +21,8 @@ export const AppContext = createContext<{
   setFocusBlood: Dispatch<SetStateAction<number>>;
   bloodProperties: BloodPropertiesType[];
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
+  bloodHeight: number[];
+  setBloodHeight: Dispatch<SetStateAction<number[]>>;
 }>({
   settings: defaultSettings,
   setSettings: () => {},
@@ -31,6 +32,8 @@ export const AppContext = createContext<{
   setFocusBlood: () => {},
   bloodProperties: [],
   setBloodProperties: () => {},
+  bloodHeight: [],
+  setBloodHeight: () => {},
 });
 
 export const CrimeSceneContext = createContext<{

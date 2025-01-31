@@ -29,7 +29,7 @@ export default function BloodDrop({
   setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
   setFocusBlood: Dispatch<SetStateAction<number>>;
 }) {
-  const { settings } = useContext(AppContext);
+  const { settings, bloodHeight } = useContext(AppContext);
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
   const [rotation, setRotation] = useState(String(bloodPropertie.userrot || 0));
@@ -78,18 +78,22 @@ export default function BloodDrop({
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4 w-full items-center">
+    <div className="grid grid-cols-3 gap-2 w-full items-center">
       <img
         src={URL.createObjectURL(file)}
         className="h-24 w-full rounded-l-md"
       />
       <div className="col-span-2 flex justify-between items-start h-full">
-        <div className="h-full flex flex-col items-start justify-start gap-2 py-2 text-left text-sm text-gray-200">
-          <Input label="x" data={x} setData={setX} />
-          <Input label="y" data={y} setData={setY} />
-          <Input label="r" data={rotation} setData={setRotation} />
+        <div className="grid grid-cols-2">
+          <div className="h-full col-span-1 flex flex-col items-start justify-start gap-2 py-2 text-left text-sm text-gray-200">
+            <Input label="x" data={x} setData={setX} />
+            <Input label="y" data={y} setData={setY} />
+            <Input label="r" data={rotation} setData={setRotation} />
+          </div>
+          <div className="text-sm col-span-1 py-2">
+            height: {bloodHeight[index].toFixed(2)}
+          </div>
         </div>
-        <div></div>
         <div className="flex gap-2 p-2 items-center">
           <button onClick={() => handleDelete(index)}>
             <MdDeleteOutline size={24} color="red" />
