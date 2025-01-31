@@ -93,13 +93,16 @@ export default function BloodDrop({
         className="h-24 w-full rounded-l-md"
       />
       <div className="col-span-2 flex justify-between items-start h-full">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-2">
           <div className="h-full col-span-1 flex flex-col items-start justify-start gap-2 py-2 text-left text-sm text-gray-200">
             <Input label="x" data={x} setData={setX} />
             <Input label="y" data={y} setData={setY} />
             <Input label="r" data={rotation} setData={setRotation} />
           </div>
-          <div className="text-sm col-span-1 py-2">height: {bh}</div>
+          <div className="h-full col-span-1 flex flex-col items-start justify-start gap-2 py-2 text-sm text-left text-gray-200">
+            <div>height: {Number(bh) == 0 ? "?" : bh}</div>
+            <div>AOI: {bloodPropertie.AOI == 0 ? "?" : bloodPropertie.AOI}</div>
+          </div>
         </div>
         <div className="flex gap-2 p-2 items-center">
           <button onClick={() => handleDelete(index)}>

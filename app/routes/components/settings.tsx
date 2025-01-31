@@ -39,31 +39,19 @@ export default function Settings() {
         selectedChoice={motion}
         setSelectedChoice={setMotion}
       />
+      <Tickbox
+        title="Show Blood Motion"
+        data={showTrajectory}
+        setData={setShowTrajectory}
+      />
+      <Tickbox title="Show Blood Path" data={showSP} setData={setShowSP} />
+      <Tickbox title="Show AOC" data={showAOC} setData={setShowAOC} />
       <Selector
         title="AOI Material"
         choices={["Paper", "Glass", "Wood", "Smooth Tile", "Rough Tile"]}
         selectedChoice={material}
         setSelectedChoice={setMaterial}
       />
-      <div className="flex flex-col">
-        <div className="text-gray-200 font-bold">Plane Size</div>
-        <div className="mt-2">
-          <input
-            value={planeSize}
-            onChange={(e) => setPlaneSize(e.target.value)}
-            className="w-32 p-2 border rounded-md"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col gap-1">
-        <Tickbox
-          title="Show Blood Motion"
-          data={showTrajectory}
-          setData={setShowTrajectory}
-        />
-        <Tickbox title="Show Blood Path" data={showSP} setData={setShowSP} />
-        <Tickbox title="Show AOC" data={showAOC} setData={setShowAOC} />
-      </div>
     </div>
   );
 }
