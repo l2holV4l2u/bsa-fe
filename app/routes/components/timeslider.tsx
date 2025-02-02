@@ -60,13 +60,17 @@ export default function TimeSlider() {
       </div>
       <div className="w-full flex items-center justify-center gap-4">
         <button onClick={() => setTime(0)}>
-          <FaBackward size={24} />
+          <FaBackward size={24} color="white" />
         </button>
         <button onClick={handlePlayStop}>
-          {isPlaying ? <FaPause size={24} /> : <FaPlay size={24} />}
+          {isPlaying ? (
+            <FaPause size={24} color="white" />
+          ) : (
+            <FaPlay size={24} color="white" />
+          )}
         </button>
         <button onClick={() => setTime(100)}>
-          <FaForward size={24} />
+          <FaForward size={24} color="white" />
         </button>
       </div>
     </>

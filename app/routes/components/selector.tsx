@@ -18,7 +18,7 @@ export default function Selector({
         <select
           value={selectedChoice || ""}
           onChange={(e) => setSelectedChoice(e.target.value)}
-          className="w-32 p-2 border rounded-md"
+          className="w-32 p-2 border rounded-md bg-black text-white"
         >
           {choices.map((choice) => (
             <option key={choice} value={choice}>

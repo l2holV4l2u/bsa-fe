@@ -16,7 +16,7 @@ export default function Tickbox({
 
   return (
     <div className="relative">
-      <label className="flex gap-2 items-center">
+      <label className="flex gap-2 items-center text-white">
         <input
           type="checkbox"
           checked={data}

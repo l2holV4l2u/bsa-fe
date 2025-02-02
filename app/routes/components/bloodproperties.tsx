@@ -121,7 +121,11 @@ export default function BloodProperties({
   return (
     <div className="flex flex-col items-start justify-start w-full h-full p-4 gap-2">
       <button>
-        <FaArrowLeftLong size={24} onClick={() => setFocusBlood(-1)} />
+        <FaArrowLeftLong
+          size={24}
+          onClick={() => setFocusBlood(-1)}
+          color="white"
+        />
       </button>
       <div className="w-full flex items-center justify-center h-1/2">
         {imageUrl && (
@@ -144,7 +148,7 @@ export default function BloodProperties({
         )}
       </div>
       {bloodPropertie.calrot != null && (
-        <div className="mt-4 flex flex-col gap-2 items-center w-full">
+        <div className="mt-4 flex flex-col gap-2 items-center w-full text-white">
           <div>Rotation: {bloodPropertie.calrot}°</div>
           <div>
             [ A, B, C, D, E, F ]: [{bloodPropertie.A}, {bloodPropertie.B},
