@@ -14,11 +14,12 @@ export default function Scene() {
           settings.planeSize / 2,
           -settings.planeSize - settings.planeSize / 4,
         ]}
-        fov={50}
+        fov={25}
       />
       <OrbitControls
         target={[settings.planeSize / 2, 0, -settings.planeSize / 2]}
       />
+
       <ambientLight intensity={0.5} />
       <directionalLight position={[3, 3, -3]} />
       {/* Floor */}
