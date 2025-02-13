@@ -33,23 +33,25 @@ def analyze_blood_image():
     if 'image' not in request.files:
         return jsonify({"error": "No image provided"}), 400
     image_file = request.files['image']
-    img = Image.open(image_file.stream)
-    img = np.array(img)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (5,5), 0)
-    edges = cv2.Canny(blurred, threshold1=50, threshold2=150)
-    kernel = np.ones((5,5), np.uint8)
-    edges = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contour_img = cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+    proimg = Image.open(image_file.stream)
+    proimg = np.array(proimg)
+    proimg = cv2.cvtColor(proimg, cv2.COLOR_BGR2GRAY)
+    proimg = cv2.GaussianBlur(proimg, (5,5), 0)
+    _, proimg = cv2.threshold(proimg, 127, 255, cv2.THRESH_BINARY)
+    proimg = cv2.morphologyEx(proimg, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(20,20)))
+    contours, _ = cv2.findContours(proimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contour_img = cv2.cvtColor(proimg, cv2.COLOR_GRAY2BGR)
     ellipses = []
     ellipse_areas = []    
+    
+    print(contours)
     for contour in contours:
         if len(contour) >= 5:
             ellipse = cv2.fitEllipse(contour)
             area = fit_ellipse_area(ellipse)
             ellipses.append(ellipse)
             ellipse_areas.append(area)
+            #cv2.ellipse(contour_img, ellipse, (0, 0, 255), 2)
     if ellipses:
         largest_ellipse_index = np.argmax(ellipse_areas)
         largest_ellipse = ellipses[largest_ellipse_index]
@@ -58,6 +60,7 @@ def analyze_blood_image():
     else:
         largest_ellipse = None
         ellipse_equation = "No valid ellipses found"
+
     return jsonify({
         "contour_image": encode_image(contour_img),
         "ellipse_equation": ellipse_equation
