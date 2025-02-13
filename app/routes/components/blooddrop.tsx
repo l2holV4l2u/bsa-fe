@@ -12,7 +12,7 @@ import Input from "./input";
 import { computeEdge } from "../functions/computeedge";
 import { AppContext } from "../functions/context";
 import { atan, max, min, sqrt } from "mathjs";
-import { bloodProcessing } from "../functions/bloodProcessing";
+import { bloodProcessing } from "../functions/bloodprocessing";
 
 export default function BloodDrop({
   index,

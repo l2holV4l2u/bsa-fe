@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from http.server import BaseHTTPRequestHandler
 import cv2
 import numpy as np
 from PIL import Image
@@ -7,6 +8,14 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type','text/plain')
+        self.end_headers()
+        self.wfile.write('Hello, world!'.encode('utf-8'))
+        return
 
 def fit_ellipse_equation(ellipse):
     (x_center, y_center), (major_axis, minor_axis), angle = ellipse
