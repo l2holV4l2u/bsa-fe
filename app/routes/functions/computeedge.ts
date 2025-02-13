@@ -6,9 +6,9 @@ export function computeEdge(
   planeSize: number,
   x: number,
   y: number,
-  userrot: number
+  prerot: number
 ) {
-  const rotation = userrot + 180;
+  const rotation = prerot + 180;
   const direction = new THREE.Vector3(
     Math.round(rotation / 180) % 2 == 0 ? 1 : -1,
     0,

@@ -3,24 +3,23 @@ import BloodDrop from "./blooddrop";
 import { HiOutlinePlus } from "react-icons/hi";
 import * as THREE from "three";
 import { AppContext } from "../functions/context";
+import { BloodPropertiesType } from "../types/blood";
 
 export default function BloodContainer() {
-  const { bloodProperties, setFocusBlood, setBloodProperties } =
-    useContext(AppContext);
+  const { bloodProperties, setBloodProperties } = useContext(AppContext);
   const [isDelete, setIsDelete] = useState(false);
 
   const defaultBlood = (
     uploadedFile: File,
-    angle: number = 0,
     x: number = 0,
     y: number = 0,
-    userrot: number = 0
+    rotation: number = 0
   ) => ({
     x,
     y,
+    rotation,
     file: uploadedFile,
-    userrot,
-    calrot: 0,
+    processedFile: uploadedFile,
     A: "",
     B: "",
     C: "",
@@ -29,8 +28,8 @@ export default function BloodContainer() {
     F: "",
     semimajor: 0,
     semiminor: 0,
-    theta: angle,
-    AOI: angle,
+    theta: 0,
+    AOI: 0,
     edge: new THREE.Line3(
       new THREE.Vector3(x ?? 0, 0, y ?? 0),
       new THREE.Vector3(0, 0, 0)
@@ -65,13 +64,7 @@ export default function BloodContainer() {
     setBloodProperties([
       ...bloodProperties,
       ...clipped.map((file, index) =>
-        defaultBlood(
-          file,
-          30,
-          data[index].x / 10,
-          data[index].y / 10,
-          data[index].r
-        )
+        defaultBlood(file, data[index].x, data[index].y, data[index].r)
       ),
     ]);
   };
@@ -106,13 +99,17 @@ export default function BloodContainer() {
         {bloodProperties.map((prop, index) => (
           <div className="border-2 border-border rounded-lg w-full flex items-start justify-start gap-2">
             <BloodDrop
-              file={prop.file}
-              bloodPropertie={bloodProperties[index]}
+              bloodPropertie={prop}
               index={index}
               isDelete={isDelete}
               setIsDelete={setIsDelete}
-              setBloodProperties={setBloodProperties}
-              setFocusBlood={setFocusBlood}
+              setBloodPropertie={(val: BloodPropertiesType) => {
+                setBloodProperties((prevProperties) => {
+                  const updatedProperties = [...prevProperties];
+                  updatedProperties[index] = val;
+                  return updatedProperties;
+                });
+              }}
             />
           </div>
         ))}

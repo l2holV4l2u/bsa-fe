@@ -2,10 +2,10 @@ import * as THREE from "three";
 
 export type BloodPropertiesType = {
   file: File;
+  processedFile: File;
   x: number;
   y: number;
-  userrot: number;
-  calrot: number;
+  rotation: number;
   A: string;
   B: string;
   C: string;

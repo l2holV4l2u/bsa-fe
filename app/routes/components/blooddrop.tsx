@@ -11,28 +11,29 @@ import { FaPen } from "react-icons/fa";
 import Input from "./input";
 import { computeEdge } from "../functions/computeedge";
 import { AppContext } from "../functions/context";
+import { atan, max, min, sqrt } from "mathjs";
+import { bloodProcessing } from "../functions/bloodProcessing";
 
 export default function BloodDrop({
-  file,
-  bloodPropertie,
   index,
   isDelete,
   setIsDelete,
-  setBloodProperties,
-  setFocusBlood,
+  bloodPropertie,
+  setBloodPropertie,
 }: {
-  file: File;
-  bloodPropertie: BloodPropertiesType;
   index: number;
   isDelete: boolean;
   setIsDelete: Dispatch<SetStateAction<boolean>>;
-  setBloodProperties: Dispatch<SetStateAction<BloodPropertiesType[]>>;
-  setFocusBlood: Dispatch<SetStateAction<number>>;
+  bloodPropertie: BloodPropertiesType;
+  setBloodPropertie: (val: BloodPropertiesType) => void;
 }) {
-  const { settings, bloodHeight } = useContext(AppContext);
+  const { settings, bloodHeight, setBloodProperties, setFocusBlood } =
+    useContext(AppContext);
   const [x, setX] = useState(String(bloodPropertie.x));
   const [y, setY] = useState(String(bloodPropertie.y));
-  const [rotation, setRotation] = useState(String(bloodPropertie.userrot || 0));
+  const [rotation, setRotation] = useState(
+    String(bloodPropertie.rotation || 0)
+  );
   const [bh, setBh] = useState("0");
 
   useEffect(() => {
@@ -62,10 +63,78 @@ export default function BloodDrop({
   }, [x, y, rotation, settings]);
 
   useEffect(() => {
+    const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
+    const processBloodImage = async () => {
+      const { contourFile, ellipseEquation } = await bloodProcessing(
+        bloodPropertie.file
+      );
+      const { A, B, C, D, E, F } = ellipseEquation;
+      const semimajor = Number(
+        max(
+          sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
+          sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+        )
+      );
+      const semiminor = Number(
+        min(
+          sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / C),
+          sqrt((-F + D ** 2 / (4 * A) + E ** 2 / (4 * C)) / A)
+        )
+      );
+      const impactAngle = radToDeg(
+        atan(sqrt(semiminor ** 2 / (semimajor ** 2 - semiminor ** 2)))
+      );
+      let AOI = impactAngle;
+      switch (settings.material) {
+        case "Paper": {
+          AOI = -2.673 + 1.068 * impactAngle;
+          break;
+        }
+        case "Glass": {
+          AOI = -9.488 + 1.213 * impactAngle;
+          break;
+        }
+        case "Wood": {
+          AOI = -2.323 + 1.065 * impactAngle;
+          break;
+        }
+        case "Smooth Tile": {
+          AOI = -5.329 + 1.109 * impactAngle;
+          break;
+        }
+        case "Rough Tile": {
+          AOI = -7.775 + 1.206 * impactAngle;
+          break;
+        }
+      }
+      const updatedPropertie: BloodPropertiesType = {
+        ...bloodPropertie,
+        processedFile: contourFile ? contourFile : bloodPropertie.file,
+        A: A.toExponential(2),
+        B: B.toExponential(2),
+        C: C.toExponential(2),
+        D: D.toExponential(2),
+        E: E.toExponential(2),
+        F: F.toExponential(2),
+        semimajor: Number(semimajor.toFixed(3)),
+        semiminor: Number(semiminor.toFixed(3)),
+        theta: Number(impactAngle.toFixed(2)),
+        AOI: Number(AOI.toFixed(2)),
+      };
+      console.log(updatedPropertie);
+      setBloodPropertie(updatedPropertie);
+    };
+
+    if (bloodPropertie.file) {
+      processBloodImage();
+    }
+  }, [settings.material]);
+
+  useEffect(() => {
     if (isDelete) {
       setX(String(bloodPropertie.x));
       setY(String(-bloodPropertie.y));
-      setRotation(String(bloodPropertie.userrot || 0));
+      setRotation(String(bloodPropertie.rotation || 0));
     }
     setIsDelete(false);
   }, [isDelete]);
@@ -89,7 +158,7 @@ export default function BloodDrop({
   return (
     <div className="grid grid-cols-3 gap-2 w-full items-center">
       <img
-        src={URL.createObjectURL(file)}
+        src={URL.createObjectURL(bloodPropertie.file)}
         className="h-24 w-full rounded-l-md"
       />
       <div className="col-span-2 flex justify-between items-start h-full">

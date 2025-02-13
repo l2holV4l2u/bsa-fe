@@ -33,38 +33,34 @@ def analyze_blood_image():
     if 'image' not in request.files:
         return jsonify({"error": "No image provided"}), 400
     image_file = request.files['image']
-    proimg = Image.open(image_file.stream)
-    proimg = np.array(proimg)
-    proimg = cv2.cvtColor(proimg, cv2.COLOR_BGR2GRAY)
+    oriimg = Image.open(image_file.stream)
+    oriimg = np.array(oriimg)
+    proimg = cv2.cvtColor(oriimg, cv2.COLOR_BGR2GRAY)
     proimg = cv2.GaussianBlur(proimg, (5,5), 0)
     _, proimg = cv2.threshold(proimg, 127, 255, cv2.THRESH_BINARY)
-    proimg = cv2.morphologyEx(proimg, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(20,20)))
-    contours, _ = cv2.findContours(proimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    contour_img = cv2.cvtColor(proimg, cv2.COLOR_GRAY2BGR)
+    proimg = cv2.morphologyEx(proimg, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(25,25)))    
+    edges = cv2.Canny(proimg, threshold1=50, threshold2=150)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     ellipses = []
-    ellipse_areas = []    
-    
-    print(contours)
+    ellipse_areas = []        
     for contour in contours:
         if len(contour) >= 5:
             ellipse = cv2.fitEllipse(contour)
             area = fit_ellipse_area(ellipse)
             ellipses.append(ellipse)
             ellipse_areas.append(area)
-            #cv2.ellipse(contour_img, ellipse, (0, 0, 255), 2)
     if ellipses:
-        largest_ellipse_index = np.argmax(ellipse_areas)
-        largest_ellipse = ellipses[largest_ellipse_index]
-        cv2.ellipse(contour_img, largest_ellipse, (0, 0, 255), 2)
+        largest_ellipse = ellipses[np.argmax(ellipse_areas)]
+        cv2.ellipse(oriimg, largest_ellipse, (255, 0 ,0), 3)
         ellipse_equation = fit_ellipse_equation(largest_ellipse)
     else:
-        largest_ellipse = None
         ellipse_equation = "No valid ellipses found"
-
+    oriimg = cv2.cvtColor(oriimg, cv2.COLOR_RGB2BGR)
     return jsonify({
-        "contour_image": encode_image(contour_img),
+        "contour_image": encode_image(oriimg),
         "ellipse_equation": ellipse_equation
     })
+
 
 if __name__ == "__main__":
     app.run(debug=True)

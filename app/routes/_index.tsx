@@ -47,16 +47,7 @@ export default function Index() {
             </div>
             <div className="col-span-7 border-2 border-border rounded-lg">
               {focusBlood != -1 ? (
-                <BloodProperties
-                  bloodPropertie={bloodProperties[focusBlood]}
-                  setBloodPropertie={(val: BloodPropertiesType) => {
-                    setBloodProperties((prevProperties) => {
-                      const updatedProperties = [...prevProperties];
-                      updatedProperties[focusBlood] = val;
-                      return updatedProperties;
-                    });
-                  }}
-                />
+                <BloodProperties bloodPropertie={bloodProperties[focusBlood]} />
               ) : (
                 <Crimescene />
               )}
