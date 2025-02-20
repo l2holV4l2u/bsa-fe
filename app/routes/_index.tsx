@@ -38,14 +38,14 @@ export default function Index() {
         setBloodHeight,
       }}
     >
-      <div className="w-full max-h-screen h-screen flex flex-col items-center justify-center p-6">
+      <div className="w-full h-fit md:h-screen flex flex-col items-center justify-center p-4 md:p-6">
         <div className="w-full h-full gap-4 flex flex-col items-center justify-center">
           <Settings />
-          <div className="w-full h-[64vh] grid grid-cols-10 gap-6">
-            <div className="col-span-3 h-full overflow-y-auto">
+          <div className="w-full h-fit md:h-[64vh] flex flex-col md:grid md:grid-cols-10 gap-4 md:gap-6">
+            <div className="col-span-3 h-fit md:h-full overflow-y-auto">
               <BloodContainer />
             </div>
-            <div className="col-span-7 border-2 border-border rounded-lg">
+            <div className="col-span-7 border-2 border-border rounded-lg h-screen md:h-full">
               {focusBlood != -1 ? (
                 <BloodProperties bloodPropertie={bloodProperties[focusBlood]} />
               ) : (

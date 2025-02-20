@@ -95,25 +95,27 @@ export default function BloodContainer() {
           Autofill
         </button>
       </div>
-      <div className="flex flex-col gap-2">
-        {bloodProperties.map((prop, index) => (
-          <div className="border-2 border-border rounded-lg w-full flex items-start justify-start gap-2">
-            <BloodDrop
-              bloodPropertie={prop}
-              index={index}
-              isDelete={isDelete}
-              setIsDelete={setIsDelete}
-              setBloodPropertie={(val: BloodPropertiesType) => {
-                setBloodProperties((prevProperties) => {
-                  const updatedProperties = [...prevProperties];
-                  updatedProperties[index] = val;
-                  return updatedProperties;
-                });
-              }}
-            />
-          </div>
-        ))}
-      </div>
+      {bloodProperties.length != 0 && (
+        <div className="flex flex-col gap-2">
+          {bloodProperties.map((prop, index) => (
+            <div className="border-2 border-border rounded-lg w-full flex items-start justify-start gap-2">
+              <BloodDrop
+                bloodPropertie={prop}
+                index={index}
+                isDelete={isDelete}
+                setIsDelete={setIsDelete}
+                setBloodPropertie={(val: BloodPropertiesType) => {
+                  setBloodProperties((prevProperties) => {
+                    const updatedProperties = [...prevProperties];
+                    updatedProperties[index] = val;
+                    return updatedProperties;
+                  });
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
