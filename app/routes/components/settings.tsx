@@ -32,7 +32,7 @@ export default function Settings() {
   }, [bloodProperties]);
 
   return (
-    <div className="w-full flex flex-col md:flex-row rounded-lg justify-start md:justify-between items-start md:items-center border-2 border-border p-4 gap-4">
+    <div className="w-full flex flex-col md:flex-row rounded-lg justify-start md:justify-between items-start md:items-center border-2 border-border p-2 md:p-4 gap-4">
       <Selector
         title="Blood Motion"
         choices={["Projectile", "Free fall", "Straight"]}

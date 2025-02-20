@@ -70,7 +70,7 @@ export default function BloodContainer() {
   };
 
   return (
-    <div className="rounded-lg overflow-y-auto flex flex-col gap-2 w-full h-full p-4 border-2 border-border text-gray-200">
+    <div className="rounded-lg overflow-y-auto flex flex-col gap-2 w-full h-full p-2 md:p-4 border-2 border-border text-gray-200">
       <div className="w-full grid grid-cols-2 gap-2">
         <div>
           <label

@@ -80,7 +80,7 @@ export default function Crimescene() {
               position={[center[0], points[0].y, center[1]]}
               rotation={[Math.PI / 2, 0, 0]}
             >
-              <torusGeometry args={[settings.planeSize / 100, 0.025, 16, 32]} />
+              <torusGeometry args={[settings.planeSize / 100, 0.15, 16, 32]} />
               <meshBasicMaterial color="red" />
             </mesh>
           ) : null
@@ -90,7 +90,7 @@ export default function Crimescene() {
             position={[center[0], impact, center[1]]}
             rotation={[Math.PI / 2, 0, 0]}
           >
-            <torusGeometry args={[settings.planeSize / 100, 0.025, 16, 32]} />
+            <torusGeometry args={[settings.planeSize / 100, 0.3, 16, 32]} />
             <meshBasicMaterial color="green" />
           </mesh>
         )}

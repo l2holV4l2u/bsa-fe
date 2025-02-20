@@ -60,7 +60,7 @@ export default function BloodDrop({
         return updatedProperties;
       });
     }
-  }, [x, y, rotation, settings]);
+  }, [x, y, rotation, settings, bloodPropertie.AOI]);
 
   useEffect(() => {
     const radToDeg = (radians: any): number => (radians * 180) / Math.PI;
@@ -121,10 +121,8 @@ export default function BloodDrop({
         theta: Number(impactAngle.toFixed(2)),
         AOI: Number(AOI.toFixed(2)),
       };
-      console.log(updatedPropertie);
       setBloodPropertie(updatedPropertie);
     };
-
     if (bloodPropertie.file) {
       processBloodImage();
     }
@@ -156,29 +154,35 @@ export default function BloodDrop({
   }, [bloodHeight]);
 
   return (
-    <div className="grid grid-cols-3 gap-2 w-full items-center">
+    <div className="grid grid-cols-4 gap-2 w-full items-center">
       <img
         src={URL.createObjectURL(bloodPropertie.file)}
-        className="h-24 w-full rounded-l-md"
+        className="h-[120px] w-full rounded-l-md"
       />
-      <div className="col-span-2 flex justify-between items-start h-full">
-        <div className="grid grid-cols-2 gap-2">
-          <div className="h-full col-span-1 flex flex-col items-start justify-start gap-2 py-2 text-left text-sm text-gray-200">
+      <div className="col-span-3 flex justify-between items-start h-full">
+        <div className="grid grid-cols-2 gap-2 h-full">
+          <div className="h-full col-span-1 flex flex-col items-start justify-between gap-2 py-2 text-left text-sm text-gray-200">
             <Input label="x" data={x} setData={setX} />
             <Input label="y" data={y} setData={setY} />
             <Input label="r" data={rotation} setData={setRotation} />
           </div>
-          <div className="h-full col-span-1 flex flex-col items-start justify-start gap-2 py-2 text-sm text-left text-gray-200">
-            <div>height: {Number(bh) == 0 ? "?" : bh}</div>
-            <div>AOI: {bloodPropertie.AOI == 0 ? "?" : bloodPropertie.AOI}</div>
+          <div className="h-full col-span-1 flex flex-col items-start justify-between gap-2 py-2 text-sm text-left text-gray-200">
+            <div>
+              <div>height: </div>
+              <div>{Number(bh) == 0 ? "?" : bh}</div>
+            </div>
+            <div>
+              <div>AOI: </div>
+              <div>{bloodPropertie.AOI == 0 ? "?" : bloodPropertie.AOI}</div>
+            </div>
           </div>
         </div>
-        <div className="flex gap-2 p-2 items-center">
-          <button onClick={() => handleDelete(index)}>
-            <MdDeleteOutline size={24} color="red" />
-          </button>
+        <div className="flex gap-2 p-2 items-center flex-col ">
           <button onClick={() => setFocusBlood(index)}>
             <FaPen size={16} />
+          </button>
+          <button onClick={() => handleDelete(index)}>
+            <MdDeleteOutline size={24} color="red" />
           </button>
         </div>
       </div>
